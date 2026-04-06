@@ -36,6 +36,7 @@ function Nav() {
     { id: "hero", label: "Inicio" },
     { id: "pactia", label: "Pactia" },
     { id: "que-es-ia", label: "Que es IA" },
+    { id: "datos", label: "Datos" },
     { id: "genai", label: "GenAI" },
     { id: "real-estate", label: "Real Estate" },
     { id: "casos", label: "Casos" },
@@ -288,6 +289,103 @@ function CaseCard({ company, title, desc, metrics, source }: {
   );
 }
 
+/* ───────── TOKEN DEMO ───────── */
+function TokenDemo() {
+  const [text, setText] = useState("Pactia gestiona 42 activos inmobiliarios en Colombia con un valor de COP 3.6 billones");
+
+  const tokenize = (input: string): string[] => {
+    if (!input) return [];
+    const tokens: string[] = [];
+    const words = input.split(/(\s+)/);
+    for (const word of words) {
+      if (/^\s+$/.test(word)) { tokens.push(word); continue; }
+      if (word.length <= 3) { tokens.push(word); continue; }
+      // Simulate BPE-like splitting
+      const parts: string[] = [];
+      let remaining = word;
+      while (remaining.length > 0) {
+        const len = remaining.length <= 4 ? remaining.length : Math.min(2 + Math.floor(Math.random() * 3), remaining.length);
+        parts.push(remaining.slice(0, len));
+        remaining = remaining.slice(len);
+      }
+      tokens.push(...parts);
+    }
+    return tokens;
+  };
+
+  const colors = [
+    "rgba(0,169,224,.15)", "rgba(52,211,153,.15)", "rgba(167,139,250,.15)",
+    "rgba(251,146,60,.15)", "rgba(251,191,36,.15)", "rgba(248,113,113,.15)",
+    "rgba(0,169,224,.25)", "rgba(52,211,153,.25)",
+  ];
+  const borderColors = [
+    "rgba(0,169,224,.4)", "rgba(52,211,153,.4)", "rgba(167,139,250,.4)",
+    "rgba(251,146,60,.4)", "rgba(251,191,36,.4)", "rgba(248,113,113,.4)",
+    "rgba(0,169,224,.5)", "rgba(52,211,153,.5)",
+  ];
+
+  const tokens = tokenize(text);
+  const nonSpaceTokens = tokens.filter(t => !/^\s+$/.test(t));
+
+  return (
+    <div style={{ background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 14, padding: 24, margin: "24px 0" }}>
+      <h3>Tokenizador interactivo</h3>
+      <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 14 }}>Escribe cualquier texto y observa como se divide en tokens. Asi es como un LLM &ldquo;lee&rdquo; la informacion.</p>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Escribe algo aqui..."
+        style={{
+          width: "100%", padding: "14px 18px", background: C.dark3,
+          border: `1px solid ${C.dark4}`, borderRadius: 10, color: C.t1,
+          fontFamily: "'Inter',sans-serif", fontSize: ".9rem", outline: "none",
+        }}
+      />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 14, minHeight: 36 }}>
+        {tokens.map((t, i) => {
+          if (/^\s+$/.test(t)) return <span key={i} style={{ width: 8 }} />;
+          const ci = i % colors.length;
+          return (
+            <span key={i} style={{
+              padding: "5px 10px", borderRadius: 6, fontSize: ".72rem",
+              fontWeight: 600, fontFamily: "'JetBrains Mono',monospace",
+              background: colors[ci], border: `1px solid ${borderColors[ci]}`,
+              transition: ".2s", cursor: "default",
+            }}>{t}</span>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: 10, fontSize: ".78rem", color: C.t3, display: "flex", gap: 24 }}>
+        <span><strong style={{ color: C.azure, fontFamily: "'JetBrains Mono',monospace" }}>{nonSpaceTokens.length}</strong> tokens</span>
+        <span><strong style={{ color: C.green, fontFamily: "'JetBrains Mono',monospace" }}>{text.length}</strong> caracteres</span>
+        <span>Ratio: <strong style={{ color: C.orange, fontFamily: "'JetBrains Mono',monospace" }}>{text.length > 0 ? (nonSpaceTokens.length / text.split(/\s+/).filter(Boolean).length).toFixed(1) : "0"}</strong> tokens/palabra</span>
+      </div>
+    </div>
+  );
+}
+
+/* ───────── DATA PIPELINE STEP ───────── */
+function PipelineStep({ step, title, desc, icon, color, active, onClick }: {
+  step: number; title: string; desc: string; icon: string; color: string; active: boolean; onClick: () => void;
+}) {
+  return (
+    <div onClick={onClick} style={{
+      flex: 1, padding: "20px 16px", textAlign: "center", cursor: "pointer",
+      transition: ".3s", borderRight: `1px solid ${C.dark4}`,
+      background: active ? `${color}08` : C.dark2,
+      borderBottom: active ? `2px solid ${color}` : "2px solid transparent",
+    }}>
+      <div style={{ fontSize: "1.5rem", marginBottom: 8 }}>{icon}</div>
+      <div style={{
+        fontSize: "1.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+        color: active ? color : C.t3, opacity: active ? 1 : 0.4, marginBottom: 4,
+      }}>0{step}</div>
+      <div style={{ fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: active ? color : C.t2 }}>{title}</div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════ */
@@ -505,6 +603,523 @@ export default function Home() {
           ]}
           correct={1}
           feedback="Correcto. La IA es una herramienta poderosa que potencia las decisiones humanas, no las reemplaza. En el contexto de Pactia, la IA puede analizar millones de datos del mercado inmobiliario para informar mejor las decisiones de inversion, pero el juicio estrategico sigue siendo humano."
+        />
+      </Section>
+
+      {/* ═══════ DATOS, BIG DATA, TOKENIZACION ═══════ */}
+      <Section id="datos">
+        <SN>El combustible de la IA</SN>
+        <h2 style={{ background: `linear-gradient(135deg,#fff,${C.azureLight})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          Datos: sin datos no hay IA
+        </h2>
+        <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
+          La Inteligencia Artificial no es magia &mdash; es <strong style={{ color: C.t1 }}>matematica aplicada a datos</strong>.
+          La calidad, volumen y estructura de los datos determinan el 80% del exito de cualquier proyecto de IA.
+          Antes de hablar de algoritmos, hablemos de lo que realmente importa: <strong style={{ color: C.azure }}>los datos</strong>.
+        </p>
+
+        {/* Dato + IA equation */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 24, margin: "40px 0",
+          padding: 32, background: C.dark2, borderRadius: 14, border: `1px solid ${C.dark4}`,
+        }}>
+          {[
+            { label: "Datos de calidad", icon: "🗄️", color: C.azure },
+            { label: "+", icon: "", color: C.t3 },
+            { label: "Algoritmos", icon: "⚙️", color: C.purple },
+            { label: "+", icon: "", color: C.t3 },
+            { label: "Contexto de negocio", icon: "🎯", color: C.orange },
+            { label: "=", icon: "", color: C.t3 },
+            { label: "IA que genera valor", icon: "✨", color: C.green },
+          ].map((item, i) => (
+            item.icon ? (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "2rem", marginBottom: 8 }}>{item.icon}</div>
+                <div style={{ fontSize: ".75rem", fontWeight: 700, color: item.color, textTransform: "uppercase", letterSpacing: 1 }}>{item.label}</div>
+              </div>
+            ) : (
+              <div key={i} style={{ fontSize: "2rem", fontWeight: 900, color: C.t3, fontFamily: "'JetBrains Mono',monospace" }}>{item.label}</div>
+            )
+          ))}
+        </div>
+
+        {/* Big Data: Las 5 V expandidas */}
+        <h3 style={{ marginTop: 40 }}>Big Data: Las 5 V que todo lider debe entender</h3>
+        <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+          Big Data no es solo &ldquo;muchos datos&rdquo;. Es un fenomeno que se define por cinco dimensiones.
+          Para Pactia, cada V tiene implicaciones directas en como pueden aprovechar la IA.
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 16, marginBottom: 36 }}>
+          {[
+            {
+              v: "Volumen", icon: "📊", color: C.azure,
+              what: "La cantidad masiva de datos generados",
+              pactia: "42 activos generan datos de ocupacion, energia, mantenimiento, financieros las 24 horas. Cada sensor IoT produce ~500 MB/dia. Un solo centro comercial Gran Plaza genera miles de transacciones diarias.",
+              number: "~2.5 quintillones de bytes de datos se crean cada dia en el mundo"
+            },
+            {
+              v: "Velocidad", icon: "⚡", color: C.green,
+              what: "La rapidez con que se generan y deben procesarse",
+              pactia: "Los datos de consumo energetico de los 4,500 paneles solares, los sistemas HVAC, el trafico peatonal en centros comerciales — todo llega en tiempo real. La diferencia entre detectar un pico de consumo en minutos vs. dias puede significar miles de dolares.",
+              number: "Los sistemas modernos procesan millones de eventos por segundo"
+            },
+            {
+              v: "Variedad", icon: "🔀", color: C.purple,
+              what: "Los diferentes tipos y formatos de datos",
+              pactia: "Pactia maneja: contratos PDF, imagenes de activos, datos de sensores, hojas de calculo financieras, correos, reportes de mercado, datos de georreferenciacion. Cada fuente tiene formato diferente — integrarlos es el reto.",
+              number: "80% de los datos empresariales son no estructurados (textos, imagenes, PDFs)"
+            },
+            {
+              v: "Veracidad", icon: "✅", color: C.orange,
+              what: "La confiabilidad y precision de los datos",
+              pactia: "Un sensor de temperatura descalibrado, un contrato mal digitalizado, un dato de mercado desactualizado — un solo dato erroneo puede llevar a decisiones de inversion equivocadas. La veracidad es critica cuando se manejan COP 3.6 billones.",
+              number: "IBM estima que datos de mala calidad cuestan $3.1 trillones anuales solo en EE.UU."
+            },
+            {
+              v: "Valor", icon: "💎", color: C.yellow,
+              what: "La capacidad de extraer insights accionables",
+              pactia: "El valor no esta en tener datos, sino en convertirlos en decisiones: ¿Cual activo tiene mayor riesgo de vacancia? ¿Donde invertir en eficiencia energetica? ¿Que arrendatario necesita atencion? Sin analisis, los datos son solo ruido.",
+              number: "Solo el 32% de los datos empresariales se usa efectivamente (Forrester)"
+            },
+          ].map((item, i) => (
+            <Card key={i} accent={item.color} style={{ padding: 20 }}>
+              <div style={{ fontSize: "1.5rem", marginBottom: 8 }}>{item.icon}</div>
+              <h3 style={{ color: item.color, fontSize: "1.1rem" }}>{item.v}</h3>
+              <p style={{ color: C.t1, fontSize: ".82rem", fontWeight: 600, marginBottom: 8 }}>{item.what}</p>
+              <p style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.6, marginBottom: 12 }}>{item.pactia}</p>
+              <div style={{
+                padding: "8px 12px", background: `${item.color}10`, borderRadius: 8,
+                fontSize: ".7rem", color: item.color, fontWeight: 600, borderLeft: `3px solid ${item.color}`,
+              }}>{item.number}</div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Tipos de datos */}
+        <h3 style={{ marginTop: 48 }}>Tipos de datos: estructurados vs. no estructurados</h3>
+        <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+          Entender la diferencia es fundamental porque la IA trabaja de forma diferente con cada tipo.
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+          <Card accent={C.azure}>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+              color: C.azure, marginBottom: 12, padding: "4px 10px", background: C.azureGlow,
+              borderRadius: 8, display: "inline-block",
+            }}>Estructurados</div>
+            <p style={{ color: C.t1, fontSize: ".88rem", fontWeight: 600, marginBottom: 8 }}>
+              Datos organizados en filas y columnas
+            </p>
+            <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6, marginBottom: 12 }}>
+              Tienen un formato predefinido, viven en bases de datos o hojas de calculo. Son los mas faciles de analizar.
+            </p>
+            <div style={{ borderTop: `1px solid ${C.dark4}`, paddingTop: 12 }}>
+              <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.t3, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Ejemplos en Pactia:</div>
+              <ul style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.8, paddingLeft: 16 }}>
+                <li>Tabla de ocupacion por activo (% mensual)</li>
+                <li>Ingresos por arrendamiento en Excel</li>
+                <li>Datos de sensores IoT (temperatura, kWh)</li>
+                <li>Base de datos de arrendatarios</li>
+                <li>Indicadores financieros (ROI, NOI)</li>
+              </ul>
+            </div>
+          </Card>
+          <Card accent={C.purple}>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+              color: C.purple, marginBottom: 12, padding: "4px 10px", background: "rgba(167,139,250,.08)",
+              borderRadius: 8, display: "inline-block",
+            }}>Semi-estructurados</div>
+            <p style={{ color: C.t1, fontSize: ".88rem", fontWeight: 600, marginBottom: 8 }}>
+              Tienen alguna organizacion pero no rigida
+            </p>
+            <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6, marginBottom: 12 }}>
+              Contienen etiquetas o marcadores pero no siguen un esquema tabular estricto. Requieren procesamiento para ser analizados.
+            </p>
+            <div style={{ borderTop: `1px solid ${C.dark4}`, paddingTop: 12 }}>
+              <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.t3, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Ejemplos en Pactia:</div>
+              <ul style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.8, paddingLeft: 16 }}>
+                <li>Correos con solicitudes de arrendatarios</li>
+                <li>Reportes JSON de APIs inmobiliarias</li>
+                <li>XML de integraciones con bancos</li>
+                <li>Logs de sistemas de control de acceso</li>
+                <li>Feeds RSS de noticias del sector</li>
+              </ul>
+            </div>
+          </Card>
+          <Card accent={C.orange}>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+              color: C.orange, marginBottom: 12, padding: "4px 10px", background: "rgba(251,146,60,.08)",
+              borderRadius: 8, display: "inline-block",
+            }}>No estructurados</div>
+            <p style={{ color: C.t1, fontSize: ".88rem", fontWeight: 600, marginBottom: 8 }}>
+              Sin formato predefinido &mdash; el 80% de los datos
+            </p>
+            <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6, marginBottom: 12 }}>
+              La mayoria de la informacion valiosa esta aqui. Antes de la IA generativa, era muy dificil analizarlos. Ahora es posible.
+            </p>
+            <div style={{ borderTop: `1px solid ${C.dark4}`, paddingTop: 12 }}>
+              <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.t3, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Ejemplos en Pactia:</div>
+              <ul style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.8, paddingLeft: 16 }}>
+                <li>Contratos de arrendamiento (PDFs)</li>
+                <li>Fotografias de estado de activos</li>
+                <li>Grabaciones de reuniones con clientes</li>
+                <li>Notas de inspeccion de propiedades</li>
+                <li>Planos arquitectonicos y renders</li>
+              </ul>
+            </div>
+          </Card>
+        </div>
+
+        {/* Tokenizacion */}
+        <div style={{ marginTop: 48 }}>
+          <h3 style={{ fontSize: "clamp(1.3rem,2.5vw,2rem)", marginBottom: 8 }}>Tokenizacion: como la IA &ldquo;lee&rdquo; los datos</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, maxWidth: 700, marginBottom: 8 }}>
+            Los modelos de IA no leen texto como nosotros. Primero lo dividen en <strong style={{ color: C.azure }}>tokens</strong>: fragmentos de palabras
+            que el modelo puede procesar matematicamente. Entender esto es crucial porque:
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, margin: "20px 0" }}>
+            {[
+              { t: "Define el costo", d: "Los LLMs cobran por token. Un contrato de 50 paginas puede costar centavos o dolares dependiendo del modelo.", icon: "💰", color: C.green },
+              { t: "Limita el contexto", d: "Cada modelo tiene un limite de tokens (ventana de contexto). GPT-4o: 128K tokens, Claude: 200K tokens. Mas contexto = mejor comprension.", icon: "📏", color: C.azure },
+              { t: "Afecta la calidad", d: "Como tokenizas la informacion que le das al modelo determina que tan buena sera su respuesta. Basura entra = basura sale.", icon: "🎯", color: C.orange },
+            ].map((item, i) => (
+              <Card key={i} accent={item.color} style={{ padding: 20 }}>
+                <div style={{ fontSize: "1.3rem", marginBottom: 8 }}>{item.icon}</div>
+                <h3 style={{ color: item.color, fontSize: ".95rem" }}>{item.t}</h3>
+                <p style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.6 }}>{item.d}</p>
+              </Card>
+            ))}
+          </div>
+
+          {/* Visualizacion de tokenizacion paso a paso */}
+          <div style={{
+            background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 14, padding: 28, margin: "24px 0",
+          }}>
+            <h3>¿Como funciona la tokenizacion?</h3>
+            <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 20 }}>El proceso paso a paso de como un LLM convierte texto en numeros que puede procesar</p>
+
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+              {[
+                { step: "1. Texto original", example: "Pactia gestiona activos", color: C.t1, bg: C.dark3 },
+                { step: "2. Division en tokens", example: "[Pact] [ia] [gest] [iona] [activ] [os]", color: C.azure, bg: C.azureGlow },
+                { step: "3. Token IDs", example: "[8291] [412] [7755] [3901] [6632] [521]", color: C.purple, bg: "rgba(167,139,250,.08)" },
+                { step: "4. Embeddings (vectores)", example: "[0.23, -0.41, 0.87, ...]", color: C.green, bg: "rgba(52,211,153,.08)" },
+              ].map((item, i) => (
+                <div key={i} style={{ flex: 1, minWidth: 180 }}>
+                  <div style={{
+                    padding: "16px 14px", background: item.bg, borderRadius: 10,
+                    border: `1px solid ${item.color}20`, textAlign: "center",
+                  }}>
+                    <div style={{ fontSize: ".65rem", fontWeight: 700, color: item.color, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{item.step}</div>
+                    <div style={{ fontSize: ".78rem", fontFamily: "'JetBrains Mono',monospace", color: item.color, fontWeight: 600 }}>{item.example}</div>
+                  </div>
+                  {i < 3 && <div style={{ textAlign: "center", color: C.t3, fontSize: "1.2rem", margin: "4px 0" }}>→</div>}
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              marginTop: 20, padding: 16, background: "rgba(0,169,224,.04)", borderRadius: 10,
+              borderLeft: `3px solid ${C.azure}`,
+            }}>
+              <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+                <strong style={{ color: C.t1 }}>¿Por que importa?</strong> Cuando le envias un contrato de arrendamiento a un LLM,
+                este lo divide en miles de tokens. Un contrato tipico de Pactia (~10 paginas) puede generar entre
+                <strong style={{ color: C.azure }}> 3,000 y 5,000 tokens</strong>. Con Claude (200K tokens de contexto), podrias analizar
+                simultaneamente <strong style={{ color: C.azure }}>~40 contratos completos</strong> en una sola conversacion.
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive tokenizer */}
+          <TokenDemo />
+
+          {/* Token comparison table */}
+          <div style={{
+            background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 14, padding: 24, margin: "24px 0",
+          }}>
+            <h3>Ventana de contexto: ¿cuanto &ldquo;cabe&rdquo; en cada modelo?</h3>
+            <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 16 }}>Comparacion de capacidad de los principales LLMs para procesar informacion</p>
+            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.dark4}` }}>
+              <thead>
+                <tr>
+                  {["Modelo", "Ventana de contexto", "Equivalente aprox.", "Ideal para"].map((h, i) => (
+                    <th key={i} style={{ background: C.dark3, padding: "12px 16px", fontSize: ".72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: C.azure, textAlign: "left" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { model: "GPT-4o", tokens: "128K tokens", equiv: "~96,000 palabras / ~300 paginas", use: "Analisis de multiples documentos", color: C.green },
+                  { model: "Claude Opus/Sonnet", tokens: "200K tokens", equiv: "~150,000 palabras / ~500 paginas", use: "Contratos extensos, codigos legales", color: C.azure },
+                  { model: "Gemini 2.5 Pro", tokens: "1M tokens", equiv: "~750,000 palabras / ~2,500 paginas", use: "Portafolios completos, due diligence", color: C.yellow },
+                  { model: "GPT-4o mini", tokens: "128K tokens", equiv: "~96,000 palabras / ~300 paginas", use: "Tareas rapidas, alto volumen, bajo costo", color: C.t3 },
+                ].map((row, i) => (
+                  <tr key={i}>
+                    <td style={{ padding: "10px 16px", fontSize: ".82rem", color: row.color, fontWeight: 700, borderBottom: `1px solid ${C.dark4}`, background: C.dark2, fontFamily: "'JetBrains Mono',monospace" }}>{row.model}</td>
+                    <td style={{ padding: "10px 16px", fontSize: ".82rem", color: C.t2, borderBottom: `1px solid ${C.dark4}`, background: C.dark2, fontFamily: "'JetBrains Mono',monospace" }}>{row.tokens}</td>
+                    <td style={{ padding: "10px 16px", fontSize: ".82rem", color: C.t2, borderBottom: `1px solid ${C.dark4}`, background: C.dark2 }}>{row.equiv}</td>
+                    <td style={{ padding: "10px 16px", fontSize: ".82rem", color: C.t2, borderBottom: `1px solid ${C.dark4}`, background: C.dark2 }}>{row.use}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Levantamiento de Informacion */}
+        <div style={{ marginTop: 48 }}>
+          <h3 style={{ fontSize: "clamp(1.3rem,2.5vw,2rem)", marginBottom: 8 }}>Levantamiento de informacion: el primer paso critico</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, maxWidth: 700, marginBottom: 24 }}>
+            Antes de aplicar cualquier modelo de IA, necesitamos saber <strong style={{ color: C.t1 }}>que datos tenemos,
+            donde estan, en que formato y que tan confiables son</strong>. Este proceso de levantamiento es lo que
+            separa los proyectos de IA exitosos de los que fracasan.
+          </p>
+
+          {/* Pipeline visual */}
+          <Tabs tabs={[
+            {
+              label: "1. Identificar fuentes",
+              content: (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                  <div>
+                    <h3 style={{ color: C.azure }}>¿Donde estan los datos de Pactia?</h3>
+                    <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7, marginBottom: 16 }}>
+                      El primer paso es hacer un inventario completo de todas las fuentes de datos.
+                      Muchas organizaciones descubren que tienen datos valiosos que nunca han utilizado.
+                    </p>
+                    <Accordion items={[
+                      { title: "Sistemas internos (ERP, CRM)", content: "SAP, Oracle, o sistemas propios de gestion de activos. Aqui viven los datos financieros, contratos, inventarios. Son la columna vertebral pero a menudo estan aislados en silos." },
+                      { title: "Sensores IoT y Building Management", content: "Los sistemas BMS de los 42 activos generan datos continuos: temperatura, humedad, consumo electrico, HVAC, ascensores. Cada sensor es una fuente de datos que la IA puede aprovechar." },
+                      { title: "Documentos fisicos y digitales", content: "Contratos PDF, planos CAD, fotografias de inspecciones, actas de reunion. El 80% de la informacion valiosa esta en formatos no estructurados que ahora la GenAI puede procesar." },
+                      { title: "Datos externos y de mercado", content: "DANE, Camacol, Galeria Inmobiliaria, datos catastrales, indices de construccion. Complementan los datos internos para decisiones de inversion mas informadas." },
+                      { title: "Datos de terceros y arrendatarios", content: "Historiales crediticios, patrones de pago, feedback de encuestas de satisfaccion. Permiten predecir rotacion y personalizar la experiencia." },
+                    ]} />
+                  </div>
+                  <Card>
+                    <h3 style={{ color: C.orange }}>Errores comunes en el levantamiento</h3>
+                    <div style={{ marginTop: 12 }}>
+                      {[
+                        { err: "Asumir que todos los datos estan digitalizados", fix: "Auditar datos en papel, notas manuscritas, correos personales" },
+                        { err: "Ignorar datos no estructurados", fix: "Los PDFs, imagenes y correos contienen el 80% de la informacion valiosa" },
+                        { err: "No validar la calidad desde el inicio", fix: "Un campo vacio en el 30% de los registros invalida todo el analisis" },
+                        { err: "Olvidar los silos organizacionales", fix: "El area comercial y la de operaciones a menudo no comparten datos" },
+                        { err: "Subestimar temas de privacidad", fix: "Datos de arrendatarios y financieros tienen restricciones legales" },
+                      ].map((item, i) => (
+                        <div key={i} style={{
+                          padding: "12px 0", borderBottom: i < 4 ? `1px solid ${C.dark4}` : "none",
+                        }}>
+                          <div style={{ fontSize: ".82rem", fontWeight: 600, color: C.red, marginBottom: 4 }}>
+                            ✗ {item.err}
+                          </div>
+                          <div style={{ fontSize: ".78rem", color: C.green }}>
+                            ✓ {item.fix}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
+              ),
+            },
+            {
+              label: "2. Evaluar calidad",
+              content: (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 28 }}>
+                    <Counter value="80%" label="Tiempo en limpiar datos" sub="En un proyecto tipico de IA" color={C.red} />
+                    <Counter value="$3.1T" label="Costo de mala calidad" sub="Anual en EE.UU. (IBM)" color={C.orange} />
+                    <Counter value="1 de 3" label="Registros con errores" sub="Promedio empresarial" color={C.yellow} />
+                    <Counter value="27%" label="Datos de ingresos incorrectos" sub="Promedio por empresa (Gartner)" color={C.purple} />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                    <Card accent={C.green}>
+                      <h3 style={{ color: C.green }}>6 dimensiones de calidad de datos</h3>
+                      {[
+                        { dim: "Completitud", desc: "¿Hay campos vacios? ¿Faltan periodos? Un dataset de ocupacion con meses faltantes no sirve para prediccion.", pct: 95 },
+                        { dim: "Exactitud", desc: "¿Los valores son correctos? Un area arrendable mal registrada distorsiona toda la valuacion.", pct: 90 },
+                        { dim: "Consistencia", desc: "¿El mismo concepto se registra igual en todos los sistemas? Si un activo se llama 'GP Bello' en uno y 'Gran Plaza Bello' en otro, la IA no los conecta.", pct: 85 },
+                        { dim: "Oportunidad", desc: "¿Los datos estan actualizados? Datos de ocupacion de hace 6 meses son irrelevantes para decisiones de hoy.", pct: 80 },
+                        { dim: "Validez", desc: "¿Los datos cumplen las reglas del negocio? Una tasa de ocupacion de 120% indica un problema de registro.", pct: 88 },
+                        { dim: "Unicidad", desc: "¿Hay registros duplicados? Dos entradas para el mismo arrendatario generan reportes incorrectos.", pct: 92 },
+                      ].map((item, i) => (
+                        <div key={i} style={{ margin: "14px 0" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                            <span style={{ fontSize: ".82rem", fontWeight: 700, color: C.t1 }}>{item.dim}</span>
+                            <span style={{ fontSize: ".72rem", fontFamily: "'JetBrains Mono',monospace", color: C.green }}>{item.pct}% meta</span>
+                          </div>
+                          <p style={{ fontSize: ".75rem", color: C.t3, lineHeight: 1.5, marginBottom: 6 }}>{item.desc}</p>
+                          <div style={{ height: 4, background: C.dark4, borderRadius: 2 }}>
+                            <div style={{ height: "100%", width: `${item.pct}%`, background: C.green, borderRadius: 2 }} />
+                          </div>
+                        </div>
+                      ))}
+                    </Card>
+                    <Card accent={C.azure}>
+                      <h3>Framework de evaluacion rapida</h3>
+                      <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6, marginBottom: 16 }}>
+                        Preguntas clave para cada fuente de datos que identifiques en Pactia:
+                      </p>
+                      {[
+                        "¿Quien es el dueno/responsable de estos datos?",
+                        "¿Cada cuanto se actualizan?",
+                        "¿Que porcentaje de campos esta completo?",
+                        "¿Hay un proceso de validacion al ingresar datos?",
+                        "¿Se pueden exportar o tienen API disponible?",
+                        "¿Hay restricciones legales o de privacidad?",
+                        "¿Cuantos anos de historia hay disponibles?",
+                        "¿Existen respaldos/backups confiables?",
+                      ].map((q, i) => (
+                        <div key={i} style={{
+                          padding: "10px 16px", margin: "6px 0",
+                          background: C.dark3, borderLeft: `3px solid ${C.azure}`,
+                          borderRadius: "0 8px 8px 0", fontSize: ".82rem", color: C.t2, lineHeight: 1.5,
+                        }}>{q}</div>
+                      ))}
+                    </Card>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              label: "3. Estructurar y preparar",
+              content: (
+                <div>
+                  <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+                    Una vez identificados y evaluados los datos, el siguiente paso es prepararlos para que la IA pueda consumirlos.
+                    Este proceso se conoce como <strong style={{ color: C.t1 }}>ETL (Extract, Transform, Load)</strong> y es donde se
+                    invierte la mayor parte del esfuerzo.
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
+                    <Card accent={C.azure}>
+                      <div style={{
+                        fontSize: "2rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                        color: C.azure, marginBottom: 8,
+                      }}>E</div>
+                      <h3>Extraer</h3>
+                      <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+                        Conectar a las fuentes y extraer los datos en crudo. APIs, scraping de PDFs, lectura de sensores,
+                        exportacion de Excel. Para Pactia: extraer datos del BMS de cada activo, digitalizar contratos,
+                        conectar con APIs de mercado.
+                      </p>
+                    </Card>
+                    <Card accent={C.purple}>
+                      <div style={{
+                        fontSize: "2rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                        color: C.purple, marginBottom: 8,
+                      }}>T</div>
+                      <h3>Transformar</h3>
+                      <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+                        Limpiar, normalizar y enriquecer. Estandarizar nombres de activos, convertir unidades,
+                        rellenar valores faltantes, validar rangos. Ejemplo: unificar &ldquo;m2&rdquo;, &ldquo;mts2&rdquo;, &ldquo;metros cuadrados&rdquo;
+                        en un solo formato.
+                      </p>
+                    </Card>
+                    <Card accent={C.green}>
+                      <div style={{
+                        fontSize: "2rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                        color: C.green, marginBottom: 8,
+                      }}>L</div>
+                      <h3>Cargar</h3>
+                      <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+                        Almacenar en un repositorio unificado: data lake, data warehouse o base vectorial.
+                        Para IA generativa, se necesita ademas crear embeddings (representaciones vectoriales)
+                        de los documentos para poder buscar semanticamente.
+                      </p>
+                    </Card>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              label: "4. Gobernar y mantener",
+              content: (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+                  <div>
+                    <h3 style={{ color: C.orange }}>Gobernanza de datos: no es opcional</h3>
+                    <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 16 }}>
+                      Sin gobernanza, los datos se degradan con el tiempo. Para un fondo como Pactia que maneja
+                      COP 3.6 billones, la gobernanza de datos es un imperativo de negocio, no solo un tema de TI.
+                    </p>
+                    {[
+                      { t: "Propietarios de datos claros", d: "Cada dataset tiene un responsable que garantiza su calidad y acceso." },
+                      { t: "Catalogo de datos centralizado", d: "Un inventario vivo de todos los datos: que hay, donde esta, quien lo posee, que tan actualizado esta." },
+                      { t: "Politicas de acceso y seguridad", d: "Quien puede ver que datos. Los datos financieros y de arrendatarios requieren controles estrictos." },
+                      { t: "Linaje de datos (data lineage)", d: "Trazabilidad de donde viene cada dato, que transformaciones ha sufrido y donde se consume." },
+                      { t: "Metricas de calidad continuas", d: "Dashboards que monitorean completitud, exactitud y frescura de los datos criticos." },
+                    ].map((item, i) => (
+                      <div key={i} style={{
+                        padding: "12px 16px", margin: "8px 0", background: C.dark3,
+                        borderRadius: 10, borderLeft: `3px solid ${C.orange}`,
+                      }}>
+                        <div style={{ fontSize: ".84rem", fontWeight: 700, color: C.t1 }}>{item.t}</div>
+                        <div style={{ fontSize: ".78rem", color: C.t3, marginTop: 4 }}>{item.d}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <Card accent={C.green}>
+                    <h3 style={{ color: C.green }}>Madurez de datos: ¿donde esta Pactia?</h3>
+                    <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 16 }}>Modelo de madurez tipico en gestion de datos organizacional</p>
+                    {[
+                      { level: 1, name: "Inicial", desc: "Datos en silos, Excel dispersos, sin estandares", color: C.red, w: "20%" },
+                      { level: 2, name: "Gestionado", desc: "Algunos procesos definidos, bases de datos centrales", color: C.orange, w: "40%" },
+                      { level: 3, name: "Definido", desc: "Catalogo de datos, propietarios asignados, politicas claras", color: C.yellow, w: "60%" },
+                      { level: 4, name: "Medido", desc: "Metricas de calidad, linaje, monitoreo continuo", color: C.azure, w: "80%" },
+                      { level: 5, name: "Optimizado", desc: "IA integrada, datos como activo estrategico, mejora continua", color: C.green, w: "100%" },
+                    ].map((item, i) => (
+                      <div key={i} style={{ margin: "12px 0" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                          <span style={{ fontSize: ".82rem", fontWeight: 700, color: item.color }}>
+                            Nivel {item.level}: {item.name}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.4, marginBottom: 6 }}>{item.desc}</p>
+                        <div style={{ height: 6, background: C.dark4, borderRadius: 3 }}>
+                          <div style={{ height: "100%", width: item.w, background: item.color, borderRadius: 3, transition: "width 1s" }} />
+                        </div>
+                      </div>
+                    ))}
+                    <div style={{
+                      marginTop: 16, padding: 12, background: "rgba(52,211,153,.04)", borderRadius: 8,
+                      borderLeft: `3px solid ${C.green}`, fontSize: ".78rem", color: C.t2, lineHeight: 1.5,
+                    }}>
+                      <strong style={{ color: C.green }}>Meta del programa SinergIA:</strong> Ayudar a Pactia a identificar su nivel actual
+                      y disenar un plan para avanzar al menos un nivel durante los 6 modulos.
+                    </div>
+                  </Card>
+                </div>
+              ),
+            },
+          ]} />
+        </div>
+
+        {/* Quiz datos */}
+        <Quiz
+          question="En un proyecto de IA, ¿que actividad consume mas tiempo tipicamente?"
+          options={[
+            "Entrenar el modelo de IA",
+            "Limpiar, preparar y estructurar los datos",
+            "Elegir el algoritmo correcto",
+            "Presentar los resultados",
+          ]}
+          correct={1}
+          feedback="Correcto. Se estima que el 80% del tiempo de un proyecto de IA se invierte en la preparacion de datos (limpieza, transformacion, validacion). Por eso el levantamiento de informacion y la calidad de los datos son el factor #1 de exito. No importa que tan avanzado sea el modelo si los datos estan incompletos, inconsistentes o desactualizados."
+        />
+
+        <Quiz
+          question="Un contrato de arrendamiento de Pactia (10 paginas en PDF) se envia a un LLM para analisis. ¿Que pasa primero?"
+          options={[
+            "El modelo lee el PDF directamente como un humano",
+            "El PDF se convierte en texto y luego se tokeniza en fragmentos numericos",
+            "El modelo memoriza el contrato completo para siempre",
+            "El PDF se convierte en una imagen que el modelo interpreta",
+          ]}
+          correct={1}
+          feedback="Exacto. El proceso es: PDF → extraccion de texto (OCR si es escaneado) → tokenizacion (division en tokens) → conversion a numeros (embeddings) → procesamiento por el modelo. El contrato de 10 paginas genera aproximadamente 3,000-5,000 tokens. El modelo NO memoriza — solo procesa dentro de su ventana de contexto actual."
         />
       </Section>
 
