@@ -643,6 +643,157 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Expectativa vs Realidad */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, margin: "36px 0" }}>
+          {/* Cómo creen que es */}
+          <div style={{
+            background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 16, padding: 32, position: "relative",
+          }}>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+              color: C.red, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
+              Expectativa
+            </div>
+            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 24 }}>Como creen las empresas que es la IA</h3>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
+              {[
+                { label: "Datos", color: C.azure, bg: "rgba(0,169,224,.12)" },
+                { label: "→", color: C.t3, bg: "transparent" },
+                { label: "IA", color: C.purple, bg: "rgba(167,139,250,.12)" },
+                { label: "→", color: C.t3, bg: "transparent" },
+                { label: "Valor", color: C.green, bg: "rgba(52,211,153,.12)" },
+              ].map((item, i) => (
+                item.label === "→" ? (
+                  <div key={i} style={{ fontSize: "1.5rem", color: C.t3, fontWeight: 900 }}>→</div>
+                ) : (
+                  <div key={i} style={{
+                    padding: "28px 32px", background: item.bg, borderRadius: 12,
+                    border: `1px solid ${item.color}30`, textAlign: "center", flex: 1,
+                  }}>
+                    <div style={{ fontSize: "1.1rem", fontWeight: 800, color: item.color }}>{item.label}</div>
+                  </div>
+                )
+              ))}
+            </div>
+            <p style={{ color: C.t3, fontSize: ".78rem", textAlign: "center", marginTop: 16, fontStyle: "italic" }}>
+              &ldquo;Tenemos datos, metemos IA, y sale valor&rdquo; — el mito de los 3 pasos
+            </p>
+          </div>
+
+          {/* Cómo es en realidad */}
+          <div style={{
+            background: C.dark2, border: `1px solid rgba(52,211,153,.2)`, borderRadius: 16, padding: 32,
+          }}>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+              color: C.green, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
+              Realidad
+            </div>
+            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 20 }}>Como es en realidad</h3>
+
+            {/* Three main columns */}
+            <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+              {/* Datos column */}
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  padding: "8px 12px", background: "rgba(0,169,224,.1)", borderRadius: "8px 8px 0 0",
+                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.azure,
+                  borderBottom: `1px solid ${C.azure}30`,
+                }}>Datos</div>
+                <div style={{ background: "rgba(0,169,224,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
+                  {["Recopilacion", "Almacenamiento", "Sintesis"].map((t, i) => (
+                    <div key={i} style={{
+                      padding: "5px 8px", margin: "3px 0", background: C.dark3, borderRadius: 6,
+                      fontSize: ".65rem", color: C.t2, textAlign: "center", fontWeight: 600,
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", color: C.t3, fontSize: "1.2rem", fontWeight: 900 }}>→</div>
+
+              {/* Ciencia de datos column */}
+              <div style={{ flex: 2 }}>
+                <div style={{
+                  padding: "8px 12px", background: "rgba(52,211,153,.1)", borderRadius: "8px 8px 0 0",
+                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.green,
+                  borderBottom: `1px solid ${C.green}30`,
+                }}>Ciencia de datos</div>
+                <div style={{ background: "rgba(52,211,153,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
+                  <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
+                    <div style={{ flex: 1, padding: "4px 6px", background: "rgba(0,169,224,.08)", borderRadius: 6, fontSize: ".6rem", color: C.azure, textAlign: "center", fontWeight: 600 }}>Ing. de Datos</div>
+                    <div style={{ flex: 1, padding: "4px 6px", background: "rgba(167,139,250,.08)", borderRadius: 6, fontSize: ".6rem", color: C.purple, textAlign: "center", fontWeight: 600 }}>Modelado</div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 3 }}>
+                    {["Exploracion", "Limpieza", "Normalizacion", "Escalado", "Seleccion", "Entrenamiento", "Evaluacion", "Ajuste"].map((t, i) => (
+                      <div key={i} style={{
+                        padding: "4px 3px", background: i < 4 ? "rgba(0,169,224,.06)" : "rgba(167,139,250,.06)",
+                        borderRadius: 4, fontSize: ".55rem", color: C.t2, textAlign: "center", fontWeight: 600,
+                      }}>{t}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", color: C.t3, fontSize: "1.2rem", fontWeight: 900 }}>→</div>
+
+              {/* Valor column */}
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  padding: "8px 12px", background: "rgba(251,191,36,.1)", borderRadius: "8px 8px 0 0",
+                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.yellow,
+                  borderBottom: `1px solid ${C.yellow}30`,
+                }}>Valor</div>
+                <div style={{ background: "rgba(251,191,36,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
+                  <div style={{
+                    padding: "4px 8px", margin: "3px 0", background: "rgba(251,191,36,.08)", borderRadius: 6,
+                    fontSize: ".62rem", color: C.yellow, textAlign: "center", fontWeight: 600,
+                  }}>Puesta en produccion</div>
+                  {["Registro", "Despliegue", "Monitoreo", "Reentrenamiento"].map((t, i) => (
+                    <div key={i} style={{
+                      padding: "4px 8px", margin: "3px 0", background: C.dark3, borderRadius: 6,
+                      fontSize: ".6rem", color: C.t2, textAlign: "center", fontWeight: 600,
+                    }}>{t}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Restricciones */}
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: ".65rem", fontWeight: 700, color: C.t3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Restricciones transversales:</div>
+              {[
+                { label: "Legal", color: "rgba(167,139,250,.15)", text: C.purple },
+                { label: "Etica / Transparencia", color: "rgba(0,169,224,.1)", text: C.azure },
+                { label: "Historico (sesgos)", color: "rgba(251,191,36,.1)", text: C.yellow },
+                { label: "Seguridad", color: "rgba(248,113,113,.1)", text: C.red },
+              ].map((r, i) => (
+                <div key={i} style={{
+                  padding: "5px 12px", margin: "3px 0", background: r.color, borderRadius: 6,
+                  fontSize: ".65rem", color: r.text, fontWeight: 600, textAlign: "center",
+                }}>{r.label}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          padding: 20, background: "rgba(0,169,224,.04)", borderRadius: 12, borderLeft: `3px solid ${C.azure}`,
+          marginBottom: 12,
+        }}>
+          <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7 }}>
+            <strong style={{ color: C.t1 }}>La leccion clave:</strong> La IA no es solo &ldquo;meter datos y sacar valor&rdquo;.
+            Hay un proceso completo de <strong style={{ color: C.azure }}>recopilacion, limpieza, ingenieria, modelado, evaluacion y despliegue</strong>,
+            cruzado por restricciones de etica, seguridad y legalidad. Entender esto desde el inicio evita expectativas
+            irreales y proyectos fallidos. <strong style={{ color: C.green }}>El 85% de los proyectos de IA que fracasan
+            lo hacen por problemas de datos, no de algoritmos.</strong>
+          </p>
+        </div>
+
         {/* Big Data: Las 5 V expandidas */}
         <h3 style={{ marginTop: 40 }}>Big Data: Las 5 V que todo lider debe entender</h3>
         <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
