@@ -42,6 +42,7 @@ function Nav() {
     { id: "casos", label: "Casos" },
     { id: "oportunidades", label: "Oportunidades" },
     { id: "etica", label: "Ética" },
+    { id: "estrategia", label: "Estrategia" },
     { id: "roadmap", label: "Roadmap" },
   ];
 
@@ -391,6 +392,7 @@ function PipelineStep({ step, title, desc, icon, color, active, onClick }: {
    ═══════════════════════════════════════════════════════ */
 export default function Home() {
   const [scrollTop, setScrollTop] = useState(false);
+  const [canvasActive, setCanvasActive] = useState<number | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrollTop(window.scrollY > 600);
@@ -507,7 +509,7 @@ export default function Home() {
         }}>
           <div style={{ fontSize: "2.5rem" }}>💡</div>
           <div>
-            <h3>¿Por que IA para Pactia?</h3>
+            <h3>¿Por qué IA para Pactia?</h3>
             <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
               Con un <strong style={{ color: C.t1 }}>portafolio diversificado</strong>, amplia presencia geográfica y un
               compromiso firme con la sostenibilidad, Pactia tiene la escala y complejidad perfecta para que la IA
@@ -526,7 +528,7 @@ export default function Home() {
           ¿Qué es la Inteligencia Artificial?
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
-          La IA no es una sola tecnologia: es un <strong style={{ color: C.t1 }}>ecosistema de capacidades</strong> que permite
+          La IA no es una sola tecnología: es un <strong style={{ color: C.t1 }}>ecosistema de capacidades</strong> que permite
           a las máquinas aprender, razonar y actuar. Entender sus capas es clave para identificar oportunidades reales.
         </p>
 
@@ -588,9 +590,9 @@ export default function Home() {
         <Quiz
           question="¿Cuál de estas afirmaciones sobre la IA es correcta?"
           options={[
-            "La IA reemplazara todos los empleos humanos en los proximos 5 anos",
+            "La IA reemplazará todos los empleos humanos en los próximos 5 años",
             "La IA es una herramienta que potencia la toma de decisiones humanas",
-            "Solo las empresas de tecnologia pueden beneficiarse de la IA",
+            "Solo las empresas de tecnología pueden beneficiarse de la IA",
             "La IA funciona sin necesidad de datos",
           ]}
           correct={1}
@@ -606,7 +608,7 @@ export default function Home() {
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
           La Inteligencia Artificial no es magia &mdash; es <strong style={{ color: C.t1 }}>matemática aplicada a datos</strong>.
-          La calidad, volumen y estructura de los datos determinan el 80% del exito de cualquier proyecto de IA.
+          La calidad, volumen y estructura de los datos determinan el 80% del éxito de cualquier proyecto de IA.
           Antes de hablar de algoritmos, hablemos de lo que realmente importa: <strong style={{ color: C.azure }}>los datos</strong>.
         </p>
 
@@ -623,7 +625,7 @@ export default function Home() {
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
               Expectativa
             </div>
-            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 24 }}>Como creen las empresas que es la IA</h3>
+            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 24 }}>Cómo creen las empresas que es la IA</h3>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
               {[
                 { label: "Datos", color: C.azure, bg: "rgba(0,169,224,.12)" },
@@ -660,7 +662,7 @@ export default function Home() {
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
               Realidad
             </div>
-            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 20 }}>Como es en realidad</h3>
+            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 20 }}>Cómo es en realidad</h3>
 
             {/* Three main columns */}
             <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
@@ -672,7 +674,7 @@ export default function Home() {
                   borderBottom: `1px solid ${C.azure}30`,
                 }}>Datos</div>
                 <div style={{ background: "rgba(0,169,224,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
-                  {["Recopilación", "Almacenamiento", "Sintesis"].map((t, i) => (
+                  {["Recopilación", "Almacenamiento", "Síntesis"].map((t, i) => (
                     <div key={i} style={{
                       padding: "5px 8px", margin: "3px 0", background: C.dark3, borderRadius: 6,
                       fontSize: ".65rem", color: C.t2, textAlign: "center", fontWeight: 600,
@@ -754,7 +756,7 @@ export default function Home() {
         }}>
           <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7 }}>
             <strong style={{ color: C.t1 }}>La lección clave:</strong> La IA no es solo &ldquo;meter datos y sacar valor&rdquo;.
-            Hay un proceso completo de <strong style={{ color: C.azure }}>recopilación, limpieza, ingenieria, modelado, evaluación y despliegue</strong>,
+            Hay un proceso completo de <strong style={{ color: C.azure }}>recopilación, limpieza, ingeniería, modelado, evaluación y despliegue</strong>,
             cruzado por restricciones de ética, seguridad y legalidad. Entender esto desde el inicio evita expectativas
             irreales y proyectos fallidos. <strong style={{ color: C.green }}>El 85% de los proyectos de IA que fracasan
             lo hacen por problemas de datos, no de algoritmos.</strong>
@@ -774,7 +776,7 @@ export default function Home() {
               v: "Volumen", icon: "📊", color: C.azure,
               what: "La cantidad masiva de datos generados",
               pactia: "Los activos inmobiliarios generan datos de ocupación, energía, mantenimiento y financieros las 24 horas. Cada sensor IoT produce ~500 MB/día. Un solo centro comercial genera miles de transacciones diarias.",
-              number: "~2.5 quintillones de bytes de datos se crean cada dia en el mundo"
+              number: "~2.5 quintillones de bytes de datos se crean cada día en el mundo"
             },
             {
               v: "Velocidad", icon: "⚡", color: C.green,
@@ -790,7 +792,7 @@ export default function Home() {
             },
             {
               v: "Veracidad", icon: "✅", color: C.orange,
-              what: "La confiabilidad y precision de los datos",
+              what: "La confiabilidad y precisión de los datos",
               pactia: "Un sensor de temperatura descalibrado, un contrato mal digitalizado, un dato de mercado desactualizado — un solo dato erróneo puede llevar a decisiones de inversión equivocadas. La veracidad es crítica en un fondo de inversión inmobiliaria de esta escala.",
               number: "IBM estima que datos de mala calidad cuestan $3.1 trillones anuales solo en EE.UU."
             },
@@ -877,16 +879,16 @@ export default function Home() {
               Sin formato predefinido &mdash; el 80% de los datos
             </p>
             <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6, marginBottom: 12 }}>
-              La mayoria de la información valiosa está aquí. Antes de la IA generativa, era muy difícil analizarlos. Ahora es posible.
+              La mayoría de la información valiosa está aquí. Antes de la IA generativa, era muy difícil analizarlos. Ahora es posible.
             </p>
             <div style={{ borderTop: `1px solid ${C.dark4}`, paddingTop: 12 }}>
               <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.t3, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Ejemplos en Pactia:</div>
               <ul style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.8, paddingLeft: 16 }}>
                 <li>Contratos de arrendamiento (PDFs)</li>
-                <li>Fotografias de estado de activos</li>
+                <li>Fotografías de estado de activos</li>
                 <li>Grabaciones de reuniones con clientes</li>
                 <li>Notas de inspección de propiedades</li>
-                <li>Planos arquitectonicos y renders</li>
+                <li>Planos arquitectónicos y renders</li>
               </ul>
             </div>
           </Card>
@@ -945,9 +947,9 @@ export default function Home() {
               borderLeft: `3px solid ${C.azure}`,
             }}>
               <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
-                <strong style={{ color: C.t1 }}>¿Por que importa?</strong> Cuando le envias un contrato de arrendamiento a un LLM,
-                este lo divide en miles de tokens. Un contrato tipico de Pactia (~10 páginas) puede generar entre
-                <strong style={{ color: C.azure }}> 3,000 y 5,000 tokens</strong>. Con Claude (200K tokens de contexto), podrias analizar
+                <strong style={{ color: C.t1 }}>¿Por qué importa?</strong> Cuando le envías un contrato de arrendamiento a un LLM,
+                este lo divide en miles de tokens. Un contrato típico de Pactia (~10 páginas) puede generar entre
+                <strong style={{ color: C.azure }}> 3,000 y 5,000 tokens</strong>. Con Claude (200K tokens de contexto), podrías analizar
                 simultáneamente <strong style={{ color: C.azure }}>~40 contratos completos</strong> en una sola conversación.
               </p>
             </div>
@@ -960,7 +962,7 @@ export default function Home() {
           <div style={{
             background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 14, padding: 24, margin: "24px 0",
           }}>
-            <h3>Ventana de contexto: ¿cuanto &ldquo;cabe&rdquo; en cada modelo?</h3>
+            <h3>Ventana de contexto: ¿cuánto &ldquo;cabe&rdquo; en cada modelo?</h3>
             <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 16 }}>Comparación de capacidad de los principales LLMs para procesar información</p>
             <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.dark4}` }}>
               <thead>
@@ -993,8 +995,8 @@ export default function Home() {
         <div style={{ marginTop: 48 }}>
           <h3 style={{ fontSize: "clamp(1.3rem,2.5vw,2rem)", marginBottom: 8 }}>Levantamiento de información: el primer paso crítico</h3>
           <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, maxWidth: 700, marginBottom: 24 }}>
-            Antes de aplicar cualquier modelo de IA, necesitamos saber <strong style={{ color: C.t1 }}>que datos tenemos,
-            donde estan, en que formato y que tan confiables son</strong>. Este proceso de levantamiento es lo que
+            Antes de aplicar cualquier modelo de IA, necesitamos saber <strong style={{ color: C.t1 }}>qué datos tenemos,
+            dónde están, en qué formato y qué tan confiables son</strong>. Este proceso de levantamiento es lo que
             separa los proyectos de IA exitosos de los que fracasan.
           </p>
 
@@ -1005,7 +1007,7 @@ export default function Home() {
               content: (
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   <div>
-                    <h3 style={{ color: C.azure }}>¿Donde estan los datos de Pactia?</h3>
+                    <h3 style={{ color: C.azure }}>¿Dónde están los datos de Pactia?</h3>
                     <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7, marginBottom: 16 }}>
                       El primer paso es hacer un inventario completo de todas las fuentes de datos.
                       Muchas organizaciones descubren que tienen datos valiosos que nunca han utilizado.
@@ -1015,14 +1017,14 @@ export default function Home() {
                       { title: "Sensores IoT y Building Management", content: "Los sistemas BMS de los activos generan datos continuos: temperatura, humedad, consumo eléctrico, HVAC, ascensores. Cada sensor es una fuente de datos que la IA puede aprovechar." },
                       { title: "Documentos físicos y digitales", content: "Contratos PDF, planos CAD, fotografías de inspecciones, actas de reunión. El 80% de la información valiosa está en formatos no estructurados que ahora la GenAI puede procesar." },
                       { title: "Datos externos y de mercado", content: "DANE, Camacol, Galería Inmobiliaria, datos catastrales, índices de construcción. Complementan los datos internos para decisiones de inversión más informadas." },
-                      { title: "Datos de terceros y arrendatarios", content: "Historiales crediticios, patrones de pago, feedback de encuestas de satisfaccion. Permiten predecir rotacion y personalizar la experiencia." },
+                      { title: "Datos de terceros y arrendatarios", content: "Historiales crediticios, patrones de pago, feedback de encuestas de satisfacción. Permiten predecir rotación y personalizar la experiencia." },
                     ]} />
                   </div>
                   <Card>
                     <h3 style={{ color: C.orange }}>Errores comunes en el levantamiento</h3>
                     <div style={{ marginTop: 12 }}>
                       {[
-                        { err: "Asumir que todos los datos estan digitalizados", fix: "Auditar datos en papel, notas manuscritas, correos personales" },
+                        { err: "Asumir que todos los datos están digitalizados", fix: "Auditar datos en papel, notas manuscritas, correos personales" },
                         { err: "Ignorar datos no estructurados", fix: "Los PDFs, imágenes y correos contienen el 80% de la información valiosa" },
                         { err: "No validar la calidad desde el inicio", fix: "Un campo vacío en el 30% de los registros invalida todo el análisis" },
                         { err: "Olvidar los silos organizacionales", fix: "El área comercial y la de operaciones a menudo no comparten datos" },
@@ -1049,7 +1051,7 @@ export default function Home() {
               content: (
                 <div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 28 }}>
-                    <Counter value="80%" label="Tiempo en limpiar datos" sub="En un proyecto tipico de IA" color={C.red} />
+                    <Counter value="80%" label="Tiempo en limpiar datos" sub="En un proyecto típico de IA" color={C.red} />
                     <Counter value="$3.1T" label="Costo de mala calidad" sub="Anual en EE.UU. (IBM)" color={C.orange} />
                     <Counter value="1 de 3" label="Registros con errores" sub="Promedio empresarial" color={C.yellow} />
                     <Counter value="27%" label="Datos de ingresos incorrectos" sub="Promedio por empresa (Gartner)" color={C.purple} />
@@ -1083,13 +1085,13 @@ export default function Home() {
                         Preguntas clave para cada fuente de datos que identifiques en Pactia:
                       </p>
                       {[
-                        "¿Quien es el dueno/responsable de estos datos?",
-                        "¿Cada cuanto se actualizan?",
-                        "¿Que porcentaje de campos esta completo?",
+                        "¿Quién es el dueño/responsable de estos datos?",
+                        "¿Cada cuánto se actualizan?",
+                        "¿Qué porcentaje de campos está completo?",
                         "¿Hay un proceso de validación al ingresar datos?",
                         "¿Se pueden exportar o tienen API disponible?",
                         "¿Hay restricciones legales o de privacidad?",
-                        "¿Cuantos anos de historia hay disponibles?",
+                        "¿Cuántos años de historia hay disponibles?",
                         "¿Existen respaldos/backups confiables?",
                       ].map((q, i) => (
                         <div key={i} style={{
@@ -1121,7 +1123,7 @@ export default function Home() {
                       <h3>Extraer</h3>
                       <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
                         Conectar a las fuentes y extraer los datos en crudo. APIs, scraping de PDFs, lectura de sensores,
-                        exportacion de Excel. Para Pactia: extraer datos del BMS de cada activo, digitalizar contratos,
+                        exportación de Excel. Para Pactia: extraer datos del BMS de cada activo, digitalizar contratos,
                         conectar con APIs de mercado.
                       </p>
                     </Card>
@@ -1145,8 +1147,8 @@ export default function Home() {
                       <h3>Cargar</h3>
                       <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
                         Almacenar en un repositorio unificado: data lake, data warehouse o base vectorial.
-                        Para IA generativa, se necesita ademas crear embeddings (representaciones vectoriales)
-                        de los documentos para poder buscar semanticamente.
+                        Para IA generativa, se necesita además crear embeddings (representaciones vectoriales)
+                        de los documentos para poder buscar semánticamente.
                       </p>
                     </Card>
                   </div>
@@ -1165,7 +1167,7 @@ export default function Home() {
                     </p>
                     {[
                       { t: "Propietarios de datos claros", d: "Cada dataset tiene un responsable que garantiza su calidad y acceso." },
-                      { t: "Catálogo de datos centralizado", d: "Un inventario vivo de todos los datos: que hay, donde esta, quien lo posee, que tan actualizado esta." },
+                      { t: "Catálogo de datos centralizado", d: "Un inventario vivo de todos los datos: qué hay, dónde está, quién lo posee, qué tan actualizado está." },
                       { t: "Políticas de acceso y seguridad", d: "Quién puede ver qué datos. Los datos financieros y de arrendatarios requieren controles estrictos." },
                       { t: "Linaje de datos (data lineage)", d: "Trazabilidad de dónde viene cada dato, qué transformaciones ha sufrido y dónde se consume." },
                       { t: "Métricas de calidad continuas", d: "Dashboards que monitorean completitud, exactitud y frescura de los datos críticos." },
@@ -1180,12 +1182,12 @@ export default function Home() {
                     ))}
                   </div>
                   <Card accent={C.green}>
-                    <h3 style={{ color: C.green }}>Madurez de datos: ¿donde esta Pactia?</h3>
-                    <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 16 }}>Modelo de madurez tipico en gestion de datos organizacional</p>
+                    <h3 style={{ color: C.green }}>Madurez de datos: ¿dónde está Pactia?</h3>
+                    <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 16 }}>Modelo de madurez típico en gestión de datos organizacional</p>
                     {[
-                      { level: 1, name: "Inicial", desc: "Datos en silos, Excel dispersos, sin estandares", color: C.red, w: "20%" },
+                      { level: 1, name: "Inicial", desc: "Datos en silos, Excel dispersos, sin estándares", color: C.red, w: "20%" },
                       { level: 2, name: "Gestionado", desc: "Algunos procesos definidos, bases de datos centrales", color: C.orange, w: "40%" },
-                      { level: 3, name: "Definido", desc: "Catálogo de datos, propietarios asignados, politicas claras", color: C.yellow, w: "60%" },
+                      { level: 3, name: "Definido", desc: "Catálogo de datos, propietarios asignados, políticas claras", color: C.yellow, w: "60%" },
                       { level: 4, name: "Medido", desc: "Métricas de calidad, linaje, monitoreo continuo", color: C.azure, w: "80%" },
                       { level: 5, name: "Optimizado", desc: "IA integrada, datos como activo estratégico, mejora continua", color: C.green, w: "100%" },
                     ].map((item, i) => (
@@ -1206,7 +1208,7 @@ export default function Home() {
                       borderLeft: `3px solid ${C.green}`, fontSize: ".78rem", color: C.t2, lineHeight: 1.5,
                     }}>
                       <strong style={{ color: C.green }}>Meta del programa SinergIA:</strong> Ayudar a Pactia a identificar su nivel actual
-                      y disenar un plan para avanzar al menos un nivel durante los 6 modulos.
+                      y diseñar un plan para avanzar al menos un nivel durante los 6 módulos.
                     </div>
                   </Card>
                 </div>
@@ -1232,7 +1234,7 @@ export default function Home() {
           question="Un contrato de arrendamiento de Pactia (10 páginas en PDF) se envía a un LLM para análisis. ¿Qué pasa primero?"
           options={[
             "El modelo lee el PDF directamente como un humano",
-            "El PDF se convierte en texto y luego se tokeniza en fragmentos numericos",
+            "El PDF se convierte en texto y luego se tokeniza en fragmentos numéricos",
             "El modelo memoriza el contrato completo para siempre",
             "El PDF se convierte en una imagen que el modelo interpreta",
           ]}
@@ -1248,7 +1250,7 @@ export default function Home() {
           GenAI, LLM y Big Data
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
-          Tres conceptos que estan transformando todas las industrias, incluyendo el real estate.
+          Tres conceptos que están transformando todas las industrias, incluyendo el real estate.
         </p>
 
         <Tabs tabs={[
@@ -1259,8 +1261,8 @@ export default function Home() {
                 <div>
                   <h3>¿Qué es la IA Generativa?</h3>
                   <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
-                    Es la rama de la IA que <strong style={{ color: C.t1 }}>crea contenido nuevo</strong>: texto, imagenes,
-                    codigo, analisis, reportes. A diferencia de la IA clasica que clasifica o predice, la GenAI genera.
+                    Es la rama de la IA que <strong style={{ color: C.t1 }}>crea contenido nuevo</strong>: texto, imágenes,
+                    código, análisis, reportes. A diferencia de la IA clásica que clasifica o predice, la GenAI genera.
                   </p>
                   <div style={{ marginTop: 20 }}>
                     <h3>Aplicaciones para Pactia</h3>
@@ -1281,11 +1283,11 @@ export default function Home() {
                     border: `1px solid ${C.dark4}`,
                   }}>
                     <span style={{ color: C.azure }}>&ldquo;</span>Analiza los datos de ocupación del portafolio comercial
-                    de Pactia en los ultimos 12 meses. Identifica tendencias, activos con mayor riesgo de vacancia
+                    de Pactia en los últimos 12 meses. Identifica tendencias, activos con mayor riesgo de vacancia
                     y genera recomendaciones para optimizar la estrategia de pricing.<span style={{ color: C.azure }}>&rdquo;</span>
                   </div>
                   <p style={{ color: C.t3, fontSize: ".75rem", marginTop: 12 }}>
-                    Un LLM puede procesar y sintetizar informacion que a un analista le tomaria dias compilar.
+                    Un LLM puede procesar y sintetizar información que a un analista le tomaría días compilar.
                   </p>
                 </Card>
               </div>
@@ -1308,10 +1310,10 @@ export default function Home() {
                     <h3>Capacidades clave</h3>
                     <ul style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.8, paddingLeft: 20 }}>
                       <li><strong style={{ color: C.t1 }}>Comprensión:</strong> Entienden contexto, intenciones, matices</li>
-                      <li><strong style={{ color: C.t1 }}>Generación:</strong> Producen texto coherente y util</li>
+                      <li><strong style={{ color: C.t1 }}>Generación:</strong> Producen texto coherente y útil</li>
                       <li><strong style={{ color: C.t1 }}>Razonamiento:</strong> Analizan datos y sacan conclusiones</li>
                       <li><strong style={{ color: C.t1 }}>Traducción:</strong> Convierten entre idiomas y formatos</li>
-                      <li><strong style={{ color: C.t1 }}>Código:</strong> Escriben y explican programacion</li>
+                      <li><strong style={{ color: C.t1 }}>Código:</strong> Escriben y explican programación</li>
                     </ul>
                   </div>
                 </div>
@@ -1332,7 +1334,7 @@ export default function Home() {
             ),
           },
           {
-            label: "Big Data y Analitica",
+            label: "Big Data y Analítica",
             content: (
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 36 }}>
@@ -1356,12 +1358,12 @@ export default function Home() {
                   <div>
                     <h3>Datos en el contexto de Pactia</h3>
                     <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 16 }}>
-                      Pactia genera y puede aprovechar datos de multiples fuentes:
+                      Pactia genera y puede aprovechar datos de múltiples fuentes:
                     </p>
                     <Accordion items={[
                       { title: "Datos operacionales", content: "Consumo energético de los activos del portafolio, estado de equipos HVAC, ascensores, sistemas de seguridad. Oportunidad: mantenimiento predictivo que reduce costos hasta 40%." },
                       { title: "Datos comerciales", content: "Contratos de arrendamiento, tasas de ocupación, pricing por m2, perfil de arrendatarios, rotación. Oportunidad: optimización de pricing dinámico." },
-                      { title: "Datos de mercado", content: "Tendencias del sector inmobiliario, tasas de interes, índices de construcción, oferta nueva. Oportunidad: decisión de inversión basada en datos." },
+                      { title: "Datos de mercado", content: "Tendencias del sector inmobiliario, tasas de interés, índices de construcción, oferta nueva. Oportunidad: decisión de inversión basada en datos." },
                       { title: "Datos de sostenibilidad", content: "Huella de carbono, consumo de agua, generación solar de los paneles instalados, residuos. Oportunidad: reportes ESG automatizados y optimización energética." },
                     ]} />
                   </div>
@@ -1379,7 +1381,7 @@ export default function Home() {
           La IA está transformando el Real Estate
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
-          El sector inmobiliario vive una revolución silenciosa. Los lideres globales ya estan usando IA para
+          El sector inmobiliario vive una revolución silenciosa. Los líderes globales ya están usando IA para
           tomar mejores decisiones y operar con mayor eficiencia.
         </p>
 
@@ -1391,18 +1393,18 @@ export default function Home() {
           <Counter value="72%" label="Propietarios planean invertir en IA" color={C.orange} />
         </div>
 
-        <h3 style={{ marginTop: 36, marginBottom: 16 }}>Adopción de IA por area de aplicación</h3>
+        <h3 style={{ marginTop: 36, marginBottom: 16 }}>Adopción de IA por área de aplicación</h3>
         <Bar label="Valuación automatizada (AVMs)" pct={85} color={C.azure} delay={0} />
         <Bar label="Eficiencia energética / Smart Buildings" pct={78} color={C.green} delay={200} />
         <Bar label="Mantenimiento predictivo" pct={60} color={C.purple} delay={400} />
-        <Bar label="Analitica de inquilinos" pct={55} color={C.orange} delay={600} />
+        <Bar label="Analítica de inquilinos" pct={55} color={C.orange} delay={600} />
         <Bar label="Decisión de inversión con IA" pct={45} color={C.yellow} delay={800} />
 
         <div style={{
           marginTop: 36, padding: 28, background: `linear-gradient(135deg,${C.dark2},${C.dark3})`,
           border: `1px solid ${C.dark4}`, borderRadius: 14,
         }}>
-          <h3 style={{ color: C.green }}>Dato clave: Colombia es lider en construcción verde</h3>
+          <h3 style={{ color: C.green }}>Dato clave: Colombia es líder en construcción verde</h3>
           <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
             Colombia ocupa el <strong style={{ color: C.t1 }}>2do lugar mundial en m2 certificados EDGE</strong> (22.2 millones de m2).
             Con 490+ proyectos LEED registrados, reduciendo <strong style={{ color: C.t1 }}>190,277 toneladas de CO2 anuales</strong>.
@@ -1413,12 +1415,12 @@ export default function Home() {
 
       {/* ═══════ CASOS REALES ═══════ */}
       <Section id="casos">
-        <SN>Casos de Exito</SN>
+        <SN>Casos de Éxito</SN>
         <h2 style={{ background: `linear-gradient(135deg,#fff,${C.azureLight})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           Quiénes ya lo están haciendo
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
-          Los lideres globales del real estate ya integran IA en sus operaciones con resultados medibles.
+          Los líderes globales del real estate ya integran IA en sus operaciones con resultados medibles.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, marginTop: 28 }}>
@@ -1435,12 +1437,12 @@ export default function Home() {
           />
           <CaseCard
             company="Prologis"
-            title="Logistica inteligente con IA + IoT"
+            title="Logística inteligente con IA + IoT"
             desc="El mayor REIT de logística del mundo logra 20% de reducción energética con IA+IoT en bodegas. 30% de espacios logísticos ahora automatizados. Plan de $8B para 20+ data centers."
             metrics={[
               { value: "20%", label: "Menos energía", color: C.green },
               { value: "30%", label: "Espacios automatizados", color: C.purple },
-              { value: "$8B", label: "Inversion data centers", color: C.yellow },
+              { value: "$8B", label: "Inversión data centers", color: C.yellow },
             ]}
             source="Fuente: Prologis Smart Warehouse Report"
           />
@@ -1472,7 +1474,7 @@ export default function Home() {
           <CaseCard
             company="Honeywell"
             title="Agentes IA para HVAC"
-            desc="Los agentes de IA para sistemas HVAC reducen costos energeticos en 35%. 84% de tomadores de decision en edificios comerciales planean aumentar el uso de IA."
+            desc="Los agentes de IA para sistemas HVAC reducen costos energéticos en 35%. 84% de tomadores de decisión en edificios comerciales planean aumentar el uso de IA."
             metrics={[
               { value: "35%", label: "Reducción costos HVAC", color: C.green },
               { value: "84%", label: "Planean más IA", color: C.purple },
@@ -1486,7 +1488,7 @@ export default function Home() {
             desc="McKinsey estima $110-180B de valor potencial de IA en real estate. Harvard Business School: consultores usando IA producen trabajo de 40% mayor calidad."
             metrics={[
               { value: "$180B", label: "Valor potencial", color: C.yellow },
-              { value: "40%", label: "Mas calidad con IA", color: C.green },
+              { value: "40%", label: "Más calidad con IA", color: C.green },
               { value: "$34B", label: "Eficiencia 2030 (Morgan Stanley)", color: C.azure },
             ]}
             source="Fuente: McKinsey / HBS / Morgan Stanley"
@@ -1511,7 +1513,7 @@ export default function Home() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                 {[
                   { t: "Valuación automatizada", d: "Modelos de IA (AVMs) con error mediano de solo 2.8%, vs 10-15% tradicional. Revaluación del portafolio completo en minutos.", icon: "📊", impact: "Alto" },
-                  { t: "Selección de sitios", d: "IA reduce tiempo de evaluación de sitios en 80-90%. Análisis de datos sociodemograficos, transito y competencia.", icon: "📍", impact: "Alto" },
+                  { t: "Selección de sitios", d: "IA reduce tiempo de evaluación de sitios en 80-90%. Análisis de datos sociodemográficos, tránsito y competencia.", icon: "📍", impact: "Alto" },
                   { t: "Optimización de ocupación", d: "IA puede identificar patrones para optimizar la tasa de ocupación con pricing dinámico.", icon: "🏢", impact: "Medio-Alto" },
                   { t: "Inteligencia de contratos", d: "IA abstrae contratos 60% más rápido. JLL descubrió $1M+ en cláusulas de escalamiento no ejecutadas.", icon: "📄", impact: "Alto" },
                 ].map((item, i) => (
@@ -1536,7 +1538,7 @@ export default function Home() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                 {[
                   { t: "Chatbots 24/7", d: "Atención automatizada para arrendatarios en los diferentes activos del portafolio. Manejo de consultas, solicitudes de mantenimiento y preguntas frecuentes.", icon: "💬" },
-                  { t: "Predicción de rotación", d: "Modelos que analizan patrones de pago, solicitudes de mantenimiento y comunicacion para identificar arrendatarios en riesgo antes del vencimiento.", icon: "🔮" },
+                  { t: "Predicción de rotación", d: "Modelos que analizan patrones de pago, solicitudes de mantenimiento y comunicación para identificar arrendatarios en riesgo antes del vencimiento.", icon: "🔮" },
                   { t: "Smart Parking y tráfico", d: "Para los centros comerciales del portafolio: analítica de patrones de visitantes para optimizar mix de inquilinos y áreas comunes.", icon: "🅿️" },
                   { t: "Engagement personalizado", d: "Segmentar arrendatarios por comportamiento y ofrecer amenidades, pricing o incentivos de renovación personalizados.", icon: "🎯" },
                 ].map((item, i) => (
@@ -1558,12 +1560,12 @@ export default function Home() {
                 }}>
                   <Counter value="-40%" label="Costo de mantenimiento" sub="Con IA predictiva" color={C.green} />
                   <Counter value="-90%" label="Fallas inesperadas" sub="Equipos monitoreados" color={C.azure} />
-                  <Counter value="+30%" label="Vida util de equipos" sub="HVAC, ascensores" color={C.purple} />
-                  <Counter value="67%" label="Edificios aun reactivos" sub="Oportunidad enorme" color={C.orange} />
+                  <Counter value="+30%" label="Vida útil de equipos" sub="HVAC, ascensores" color={C.purple} />
+                  <Counter value="67%" label="Edificios aún reactivos" sub="Oportunidad enorme" color={C.orange} />
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   {[
-                    { t: "HVAC predictivo", d: "Los 13 activos de almacenamiento y 11 de oficinas tienen sistemas HVAC significativos. Sensores IoT + IA predicen fallas antes de que ocurran." },
+                    { t: "HVAC predictivo", d: "Los activos de almacenamiento y oficinas del portafolio tienen sistemas HVAC significativos. Sensores IoT + IA predicen fallas antes de que ocurran." },
                     { t: "Ascensores y escaleras", d: "Los centros comerciales del portafolio dependen de circulación vertical. IA reduce 90% de fallas inesperadas." },
                     { t: "Techos y estructuras", d: "Los techos de las bodegas logísticas son costosos de reparar reactivamente. IA monitorea y alerta tempranamente." },
                     { t: "Red de sensores IoT", d: "Monitoreo centralizado de todo el portafolio. Dashboard unificado con alertas automáticas." },
@@ -1587,15 +1589,15 @@ export default function Home() {
                 }}>
                   <h3 style={{ color: C.green }}>Edificios verdes generan mayor rentabilidad</h3>
                   <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
-                    Los edificios con certificacion verde obtienen <strong style={{ color: C.t1 }}>12-28% de prima en arriendos</strong> en los principales mercados.
+                    Los edificios con certificación verde obtienen <strong style={{ color: C.t1 }}>12-28% de prima en arriendos</strong> en los principales mercados.
                     Los green leases reducen consumo de oficinas en <strong style={{ color: C.t1 }}>11-22%</strong>.
-                    La sostenibilidad ya no es compliance &mdash; es un <strong style={{ color: C.green }}>driver de valoracion</strong>.
+                    La sostenibilidad ya no es compliance &mdash; es un <strong style={{ color: C.green }}>driver de valoración</strong>.
                   </p>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   {[
-                    { t: "Optimización HVAC con IA", d: "35% de reducción en costos energeticos. Complementa los paneles solares del portafolio optimizando cuando usar solar vs. red.", icon: "⚡" },
-                    { t: "Digital Twins", d: "Gemelos digitales del portafolio para simular escenarios de descarbonizacion antes de invertir capital. Probar retrofits virtuales.", icon: "🔄" },
+                    { t: "Optimización HVAC con IA", d: "35% de reducción en costos energéticos. Complementa los paneles solares del portafolio optimizando cuándo usar solar vs. red.", icon: "⚡" },
+                    { t: "Digital Twins", d: "Gemelos digitales del portafolio para simular escenarios de descarbonización antes de invertir capital. Probar retrofits virtuales.", icon: "🔄" },
                     { t: "Reportes ESG automatizados", d: "IA automatiza la recopilación y generación de reportes de sostenibilidad. Reduce carga operativa y mejora precisión.", icon: "📋" },
                     { t: "Iluminación inteligente", d: "LED + sensores de ocupación + programación IA. 10-20% de ahorro adicional en todos los activos del portafolio.", icon: "💡" },
                   ].map((item, i) => (
@@ -1616,11 +1618,11 @@ export default function Home() {
           options={[
             "Reemplazar a todo el equipo de gestión de activos con robots",
             "Usar IA para análisis automatizado de contratos, mantenimiento predictivo y optimización energética",
-            "Construir un algoritmo de trading bursatil",
+            "Construir un algoritmo de trading bursátil",
             "Eliminar la necesidad de datos históricos",
           ]}
           correct={1}
-          feedback="Exacto. Los quick wins de IA para Pactia están en: 1) Análisis de contratos (60% más rápido, detectar clausulas perdidas), 2) Mantenimiento predictivo (40% menos costos), y 3) Optimización energética (35% ahorro en HVAC). Estos tres generan ROI medible en 6-12 meses."
+          feedback="Exacto. Los quick wins de IA para Pactia están en: 1) Análisis de contratos (60% más rápido, detectar cláusulas perdidas), 2) Mantenimiento predictivo (40% menos costos), y 3) Optimización energética (35% ahorro en HVAC). Estos tres generan ROI medible en 6-12 meses."
         />
       </Section>
 
@@ -1631,18 +1633,18 @@ export default function Home() {
           Ética y gobernanza de la IA
         </h2>
         <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
-          La IA poderosa exige uso responsable. No basta con adoptar la tecnologia &mdash; debemos definir
+          La IA poderosa exige uso responsable. No basta con adoptar la tecnología &mdash; debemos definir
           <strong style={{ color: C.t1 }}> cómo y con qué límites</strong> la usamos.
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24, marginTop: 36 }}>
           {[
-            { t: "Transparencia", d: "Los modelos de IA deben poder explicar sus recomendaciones. En decisiones de inversión, Pactia necesita entender el 'por que' detras de cada sugerencia.", icon: "🔍", color: C.azure },
+            { t: "Transparencia", d: "Los modelos de IA deben poder explicar sus recomendaciones. En decisiones de inversión, Pactia necesita entender el 'por qué' detrás de cada sugerencia.", icon: "🔍", color: C.azure },
             { t: "Privacidad de datos", d: "Los datos de arrendatarios, contratos y operaciones son sensibles. Definir qué datos se comparten con modelos de IA y cuáles se mantienen internos.", icon: "🔒", color: C.green },
             { t: "Sesgo y equidad", d: "Los modelos pueden heredar sesgos. En pricing y selección de arrendatarios, hay que auditar que la IA no discrimine injustamente.", icon: "⚖️", color: C.purple },
             { t: "Supervisión humana", d: "La IA apoya, no reemplaza. Las decisiones críticas de inversión y estrategia siempre requieren validación humana. Human-in-the-loop.", icon: "👤", color: C.orange },
-            { t: "Seguridad", d: "Proteger los modelos de IA contra manipulacion. Un modelo comprometido podria generar valoraciones erróneas o exponer datos confidenciales.", icon: "🛡️", color: C.red },
-            { t: "Responsabilidad", d: "Definir quien es responsable cuando la IA se equivoca. Politicas claras de gobernanza antes de escalar implementaciones.", icon: "📜", color: C.yellow },
+            { t: "Seguridad", d: "Proteger los modelos de IA contra manipulación. Un modelo comprometido podría generar valoraciones erróneas o exponer datos confidenciales.", icon: "🛡️", color: C.red },
+            { t: "Responsabilidad", d: "Definir quién es responsable cuando la IA se equivoca. Políticas claras de gobernanza antes de escalar implementaciones.", icon: "📜", color: C.yellow },
           ].map((item, i) => (
             <Card key={i} accent={item.color}>
               <div style={{ fontSize: "1.5rem", marginBottom: 14 }}>{item.icon}</div>
@@ -1665,9 +1667,9 @@ export default function Home() {
                 Lo que la IA NO hace bien
               </div>
               <ul style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.8, paddingLeft: 20 }}>
-                <li>Tomar decisiones estrategicas sin supervisión</li>
+                <li>Tomar decisiones estratégicas sin supervisión</li>
                 <li>Reemplazar relaciones con inversionistas y arrendatarios</li>
-                <li>Manejar negociaciones complejas con empatia</li>
+                <li>Manejar negociaciones complejas con empatía</li>
                 <li>Entender contexto político/regulatorio local</li>
                 <li>Garantizar resultados (solo probabilidades)</li>
               </ul>
@@ -1679,7 +1681,7 @@ export default function Home() {
                 Lo que la IA hace muy bien
               </div>
               <ul style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.8, paddingLeft: 20 }}>
-                <li>Procesar grandes volúmenes de datos rapidamente</li>
+                <li>Procesar grandes volúmenes de datos rápidamente</li>
                 <li>Identificar patrones invisibles al ojo humano</li>
                 <li>Automatizar tareas repetitivas y análisis rutinarios</li>
                 <li>Generar reportes y borradores instantáneos</li>
@@ -1687,7 +1689,332 @@ export default function Home() {
               </ul>
             </div>
           </div>
+
+          {/* Human vs AI Balance Visual */}
+          <div style={{
+            marginTop: 28, padding: 24, background: C.dark2, borderRadius: 14, border: `1px solid ${C.dark4}`,
+          }}>
+            <h3 style={{ textAlign: "center", marginBottom: 20 }}>Balance Humano + IA: fortalezas complementarias</h3>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
+              {/* Human side */}
+              <div style={{ flex: 1, textAlign: "right" }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.orange, textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>
+                  Fortaleza humana
+                </div>
+                {[
+                  { label: "Empatía y relaciones", w: 95 },
+                  { label: "Juicio estratégico", w: 90 },
+                  { label: "Creatividad contextual", w: 85 },
+                  { label: "Negociación compleja", w: 88 },
+                  { label: "Visión de largo plazo", w: 80 },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, margin: "6px 0", justifyContent: "flex-end" }}>
+                    <span style={{ fontSize: ".75rem", color: C.t2, fontWeight: 600 }}>{item.label}</span>
+                    <div style={{ width: 120, height: 8, background: C.dark4, borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${item.w}%`, background: C.orange, borderRadius: 4, float: "right" }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Scale icon */}
+              <div style={{
+                width: 60, height: 60, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                background: `linear-gradient(135deg,${C.orange}20,${C.azure}20)`, border: `2px solid ${C.dark4}`,
+                fontSize: "1.5rem", flexShrink: 0,
+              }}>
+                ⚖️
+              </div>
+
+              {/* AI side */}
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.azure, textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>
+                  Fortaleza IA
+                </div>
+                {[
+                  { label: "Procesamiento de volumen", w: 98 },
+                  { label: "Detección de patrones", w: 95 },
+                  { label: "Velocidad de análisis", w: 97 },
+                  { label: "Disponibilidad 24/7", w: 100 },
+                  { label: "Consistencia sin fatiga", w: 96 },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, margin: "6px 0" }}>
+                    <div style={{ width: 120, height: 8, background: C.dark4, borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${item.w}%`, background: C.azure, borderRadius: 4 }} />
+                    </div>
+                    <span style={{ fontSize: ".75rem", color: C.t2, fontWeight: 600 }}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p style={{ textAlign: "center", color: C.t3, fontSize: ".78rem", marginTop: 16, fontStyle: "italic" }}>
+              El mayor valor se genera cuando las fortalezas humanas y de la IA se combinan, no cuando compiten.
+            </p>
+          </div>
         </div>
+      </Section>
+
+      {/* ═══════ ESTRATEGIA Y GOBERNANZA DE DATOS ═══════ */}
+      <Section id="estrategia">
+        <SN>Estrategia de datos</SN>
+        <h2 style={{ background: `linear-gradient(135deg,#fff,${C.azureLight})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          Estrategia y Gobernanza de Datos
+        </h2>
+        <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 700 }}>
+          La IA sin una estrategia de datos es como construir un edificio sin cimientos. Antes de implementar modelos, necesitamos
+          definir <strong style={{ color: C.t1 }}>qué datos importan, cómo los gestionamos y quién es responsable</strong>.
+        </p>
+
+        {/* Data Strategy Framework - Pyramid */}
+        <div style={{ marginTop: 36 }}>
+          <h3>Framework de Estrategia de Datos</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+            Una estrategia de datos efectiva se construye de abajo hacia arriba, alineando infraestructura, datos y negocio.
+          </p>
+
+          <div style={{
+            maxWidth: 700, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+          }}>
+            {/* Top - Business Strategy */}
+            <div style={{
+              width: "50%", padding: "24px 20px", textAlign: "center",
+              background: `linear-gradient(135deg,${C.azure}15,${C.azure}08)`,
+              border: `2px solid ${C.azure}40`, borderRadius: "14px 14px 0 0",
+              clipPath: "polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%)",
+            }}>
+              <div style={{ fontSize: "1.3rem", marginBottom: 6 }}>🎯</div>
+              <div style={{ fontSize: ".85rem", fontWeight: 800, color: C.azure, marginBottom: 4 }}>Estrategia de Negocio</div>
+              <div style={{ fontSize: ".72rem", color: C.t2 }}>Objetivos de crecimiento, rentabilidad, sostenibilidad de Pactia</div>
+            </div>
+
+            {/* Middle - Data Strategy */}
+            <div style={{
+              width: "70%", padding: "24px 20px", textAlign: "center",
+              background: `linear-gradient(135deg,${C.green}15,${C.green}08)`,
+              border: `2px solid ${C.green}40`,
+              clipPath: "polygon(7% 0%, 93% 0%, 100% 100%, 0% 100%)",
+            }}>
+              <div style={{ fontSize: "1.3rem", marginBottom: 6 }}>📊</div>
+              <div style={{ fontSize: ".85rem", fontWeight: 800, color: C.green, marginBottom: 4 }}>Estrategia de Datos</div>
+              <div style={{ fontSize: ".72rem", color: C.t2 }}>Qué datos necesitamos, cómo los adquirimos, procesamos y usamos para habilitar los objetivos</div>
+            </div>
+
+            {/* Bottom - Infrastructure & Governance */}
+            <div style={{
+              width: "90%", padding: "24px 20px", textAlign: "center",
+              background: `linear-gradient(135deg,${C.purple}15,${C.purple}08)`,
+              border: `2px solid ${C.purple}40`, borderRadius: "0 0 14px 14px",
+              clipPath: "polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%)",
+            }}>
+              <div style={{ fontSize: "1.3rem", marginBottom: 6 }}>🏗️</div>
+              <div style={{ fontSize: ".85rem", fontWeight: 800, color: C.purple, marginBottom: 4 }}>Infraestructura y Gobernanza</div>
+              <div style={{ fontSize: ".72rem", color: C.t2 }}>Plataformas, estándares, políticas de calidad, seguridad, roles y responsabilidades</div>
+            </div>
+          </div>
+
+          <div style={{
+            marginTop: 20, padding: 16, background: "rgba(0,169,224,.04)", borderRadius: 10,
+            borderLeft: `3px solid ${C.azure}`, maxWidth: 700, margin: "20px auto 0",
+          }}>
+            <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+              <strong style={{ color: C.t1 }}>Clave:</strong> La estrategia de datos no es un proyecto de TI &mdash; es un
+              habilitador de la estrategia de negocio. Cada decisión sobre datos debe responder la pregunta:
+              <strong style={{ color: C.azure }}> ¿Cómo esto nos ayuda a cumplir nuestros objetivos de negocio?</strong>
+            </p>
+          </div>
+        </div>
+
+        {/* DAMA-DMBOK2 Wheel */}
+        <div style={{ marginTop: 48 }}>
+          <h3>DAMA-DMBOK2: las 11 áreas del conocimiento en gestión de datos</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+            El estándar internacional para gestión de datos define 11 áreas de conocimiento. La <strong style={{ color: C.t1 }}>Gobernanza de Datos</strong> está
+            en el centro y conecta todas las demás.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+            {/* Center card - Governance */}
+            <div style={{
+              gridColumn: "2 / 4", padding: 24, textAlign: "center",
+              background: `linear-gradient(135deg,${C.azure}12,${C.zafre}15)`,
+              border: `2px solid ${C.azure}50`, borderRadius: 14,
+            }}>
+              <div style={{ fontSize: "1.5rem", marginBottom: 8 }}>👑</div>
+              <div style={{ fontSize: "1rem", fontWeight: 800, color: C.azure, marginBottom: 4 }}>1. Gobernanza de Datos</div>
+              <div style={{ fontSize: ".78rem", color: C.t2 }}>El área central que coordina y dirige todas las demás. Define políticas, roles, estándares y métricas.</div>
+            </div>
+
+            {/* Remaining 10 areas */}
+            {[
+              { n: "2", name: "Arquitectura de datos", icon: "🏛️", color: C.purple, desc: "Estructura y modelos que definen cómo fluyen los datos" },
+              { n: "3", name: "Modelado y diseño", icon: "📐", color: C.green, desc: "Esquemas, relaciones y diseño lógico/físico de datos" },
+              { n: "4", name: "Almacenamiento y operaciones", icon: "💾", color: C.orange, desc: "Bases de datos, backups, rendimiento y disponibilidad" },
+              { n: "5", name: "Seguridad de datos", icon: "🔐", color: C.red, desc: "Autenticación, encriptación, privacidad y cumplimiento" },
+              { n: "6", name: "Integración e interoperabilidad", icon: "🔗", color: C.azure, desc: "ETL, APIs, consolidación entre sistemas" },
+              { n: "7", name: "Gestión de documentos y contenido", icon: "📁", color: C.yellow, desc: "Documentos, PDFs, contratos, multimedia" },
+              { n: "8", name: "Datos maestros y de referencia", icon: "🗂️", color: C.purple, desc: "Golden records, catálogos únicos, MDM" },
+              { n: "9", name: "Data Warehousing y BI", icon: "📊", color: C.green, desc: "Reportería, dashboards, OLAP, análisis" },
+              { n: "10", name: "Metadatos", icon: "🏷️", color: C.orange, desc: "Datos sobre datos: linaje, catálogos, diccionarios" },
+              { n: "11", name: "Calidad de datos", icon: "✅", color: C.azure, desc: "Perfilado, limpieza, monitoreo, métricas de calidad" },
+            ].map((item, i) => (
+              <Card key={i} accent={item.color} style={{ padding: 18 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <span style={{ fontSize: "1.1rem" }}>{item.icon}</span>
+                  <span style={{
+                    fontSize: ".65rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace",
+                    color: item.color, opacity: 0.6,
+                  }}>{item.n}</span>
+                </div>
+                <div style={{ fontSize: ".82rem", fontWeight: 700, color: item.color, marginBottom: 4 }}>{item.name}</div>
+                <div style={{ fontSize: ".7rem", color: C.t3, lineHeight: 1.4 }}>{item.desc}</div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Data Strategy Canvas */}
+        <div style={{ marginTop: 48 }}>
+          <h3>Data Strategy Canvas</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+            Un canvas interactivo para definir la estrategia de datos de Pactia. Haz clic en cada sección para explorar.
+          </p>
+
+          <div style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "auto auto",
+            gap: 12, maxWidth: 900, margin: "0 auto",
+          }}>
+            {[
+              {
+                title: "Objetivos de negocio", color: C.azure, icon: "🎯",
+                items: ["Maximizar ocupación del portafolio", "Reducir costos operativos 15%", "Aumentar valoración de activos", "Liderar en sostenibilidad (EDGE/LEED)", "Mejorar experiencia del arrendatario"],
+              },
+              {
+                title: "Preguntas clave", color: C.green, icon: "❓",
+                items: ["¿Qué activos tienen mayor riesgo de vacancia?", "¿Dónde invertir en eficiencia energética?", "¿Cómo predecir rotación de arrendatarios?", "¿Cuál es el pricing óptimo por m2?", "¿Qué cláusulas contractuales no se están ejecutando?"],
+              },
+              {
+                title: "Fuentes de datos", color: C.purple, icon: "🗄️",
+                items: ["ERP/CRM (datos financieros y comerciales)", "BMS/IoT (sensores de edificios)", "Contratos PDF (no estructurados)", "Mercado (DANE, Camacol, Galería Inmobiliaria)", "Arrendatarios (feedback, pagos, solicitudes)"],
+              },
+              {
+                title: "Brechas y oportunidades", color: C.orange, icon: "🔍",
+                items: ["Silos de datos entre áreas", "Datos no estructurados sin procesar (80%)", "Falta de catálogo de datos centralizado", "Potencial de mantenimiento predictivo sin explotar", "Reportes ESG manuales que podrían automatizarse"],
+              },
+              {
+                title: "Plan de acción", color: C.yellow, icon: "🚀", gridSpan: true,
+                items: ["Q1: Inventario de datos y evaluación de madurez", "Q2: Catálogo de datos + políticas de gobernanza", "Q3: Pilotos de IA (contratos + energía + mantenimiento)", "Q4: Escalar pilotos exitosos + medir ROI", "Continuo: Capacitación del equipo (SinergIA)"],
+              },
+            ].map((section, i) => (
+              <div
+                key={i}
+                onClick={() => setCanvasActive(canvasActive === i ? null : i)}
+                style={{
+                  padding: 20, cursor: "pointer", transition: ".3s",
+                  background: canvasActive === i ? `${section.color}10` : C.dark2,
+                  border: `2px solid ${canvasActive === i ? `${section.color}50` : C.dark4}`,
+                  borderRadius: 14,
+                  gridColumn: section.gridSpan ? "1 / 4" : undefined,
+                  transform: canvasActive === i ? "scale(1.02)" : "scale(1)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                  <span style={{ fontSize: "1.2rem" }}>{section.icon}</span>
+                  <span style={{ fontSize: ".85rem", fontWeight: 800, color: section.color }}>{section.title}</span>
+                </div>
+                <div style={{
+                  maxHeight: canvasActive === i ? 300 : 0, overflow: "hidden",
+                  transition: "max-height .4s ease-in-out",
+                }}>
+                  <ul style={{ paddingLeft: 16, margin: 0 }}>
+                    {section.items.map((item, j) => (
+                      <li key={j} style={{
+                        fontSize: ".78rem", color: C.t2, lineHeight: 1.8,
+                        listStyle: "none", paddingLeft: 12,
+                        borderLeft: `2px solid ${section.color}30`,
+                        marginBottom: 4,
+                      }}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                {canvasActive !== i && (
+                  <div style={{ fontSize: ".7rem", color: C.t3, marginTop: 4 }}>Clic para expandir</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ROI of Data Governance */}
+        <div style={{ marginTop: 48 }}>
+          <h3>ROI de la Gobernanza de Datos</h3>
+          <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 24 }}>
+            Invertir en gobernanza de datos no es un gasto &mdash; es una de las inversiones con mayor retorno demostrable.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }}>
+            <Card accent={C.green} style={{ textAlign: "center", padding: 24 }}>
+              <div style={{
+                fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                background: `linear-gradient(135deg,${C.green},${C.azureLight})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>-40%</div>
+              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Menos incidentes de datos</div>
+              <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
+                Las organizaciones con gobernanza fuerte ven 40% menos incidentes relacionados con datos
+              </div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Gartner</div>
+            </Card>
+            <Card accent={C.azure} style={{ textAlign: "center", padding: 24 }}>
+              <div style={{
+                fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                background: `linear-gradient(135deg,${C.azure},${C.azureLight})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>3:1</div>
+              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Retorno por cada $1 invertido</div>
+              <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
+                Las empresas que invierten en calidad de datos ven $3 de retorno por cada $1 invertido
+              </div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Experian</div>
+            </Card>
+            <Card accent={C.purple} style={{ textAlign: "center", padding: 24 }}>
+              <div style={{
+                fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                background: `linear-gradient(135deg,${C.purple},${C.azureLight})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>23x</div>
+              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Más probabilidad de adquirir clientes</div>
+              <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
+                Las organizaciones data-driven son 23 veces más propensas a adquirir clientes
+              </div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>McKinsey</div>
+            </Card>
+            <Card accent={C.orange} style={{ textAlign: "center", padding: 24 }}>
+              <div style={{
+                fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                background: `linear-gradient(135deg,${C.orange},${C.yellow})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>68%</div>
+              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Datos sin aprovechar</div>
+              <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
+                El 68% de los datos dentro de las empresas nunca se analizan ni se aprovechan
+              </div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Forrester</div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Quiz Strategy */}
+        <Quiz
+          question="¿Cuál es la relación correcta entre estrategia de negocio y estrategia de datos?"
+          options={[
+            "Son independientes: TI se encarga de los datos, el negocio de la estrategia",
+            "La estrategia de datos debe habilitarse y alinearse con la estrategia de negocio",
+            "Primero se define la tecnología y después se ajusta el negocio",
+            "Solo las empresas de tecnología necesitan una estrategia de datos",
+          ]}
+          correct={1}
+          feedback="Correcto. La estrategia de datos existe para habilitar la estrategia de negocio. Cada decisión sobre datos debe responder: ¿Cómo esto nos ayuda a cumplir nuestros objetivos? Para Pactia, esto significa que los datos de ocupación, energía, contratos y mercado deben gestionarse pensando en maximizar la rentabilidad del portafolio y el valor para los inversionistas."
+        />
       </Section>
 
       {/* ═══════ ROADMAP ═══════ */}
@@ -1701,14 +2028,49 @@ export default function Home() {
           a construir soluciones reales para Pactia.
         </p>
 
+        {/* Timeline visual */}
+        <div style={{
+          position: "relative", margin: "36px 0 12px", padding: "0 20px",
+        }}>
+          {/* Connecting line */}
+          <div style={{
+            position: "absolute", top: "50%", left: 40, right: 40, height: 3,
+            background: `linear-gradient(90deg,${C.azure},${C.purple},${C.green},${C.orange},${C.yellow},${C.red})`,
+            borderRadius: 2, transform: "translateY(-50%)",
+          }} />
+          <div style={{ display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
+            {[
+              { n: "01", name: "Entender", color: C.azure, active: true },
+              { n: "02", name: "Explorar", color: C.purple, active: false },
+              { n: "03", name: "Hacer", color: C.green, active: false },
+              { n: "04", name: "Transformar", color: C.orange, active: false },
+              { n: "05", name: "Construir", color: C.yellow, active: false },
+              { n: "06", name: "Apropiar", color: C.red, active: false },
+            ].map((m, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: "50%", margin: "0 auto 8px",
+                  background: m.active ? m.color : C.dark3,
+                  border: `3px solid ${m.color}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: ".75rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                  color: m.active ? C.dark : m.color, opacity: m.active ? 1 : 0.6,
+                  boxShadow: m.active ? `0 0 16px ${m.color}40` : "none",
+                }}>{m.n}</div>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: m.active ? m.color : C.t3 }}>{m.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20, marginTop: 36 }}>
           {[
             { n: "01", name: "Entender", hours: "3h", desc: "Fundamentos de IA y Big Data para no técnicos. Conceptos clave y su relación con el negocio de Pactia.", status: "En curso", color: C.azure, active: true },
-            { n: "02", name: "Explorar", hours: "3h", desc: "IA aplicada al Real Estate y a la estrategia. Gestion de portafolios, evaluación de activos, inteligencia de mercados.", status: "Próximo", color: C.purple, active: false },
+            { n: "02", name: "Explorar", hours: "3h", desc: "IA aplicada al Real Estate y a la estrategia. Gestión de portafolios, evaluación de activos, inteligencia de mercados.", status: "Próximo", color: C.purple, active: false },
             { n: "03", name: "Hacer", hours: "6h", desc: "Análisis de datos y automatización con IA. Ejercicios prácticos con datos y escenarios reales de Pactia.", status: "Próximamente", color: C.green, active: false },
             { n: "04", name: "Transformar", hours: "8h", desc: "IA generativa y Data Storytelling. Narrar con datos para líderes, creación de contenidos estratégicos.", status: "Próximamente", color: C.orange, active: false },
             { n: "05", name: "Construir", hours: "8h", desc: "Proyectos aplicados por equipos. Definición de retos reales, desarrollo de prototipos y automatizaciones.", status: "Próximamente", color: C.yellow, active: false },
-            { n: "06", name: "Apropiar", hours: "8h", desc: "Cierre y transferencia al negocio. Presentacion de proyectos, validación en contexto real, lecciones aprendidas.", status: "Próximamente", color: C.red, active: false },
+            { n: "06", name: "Apropiar", hours: "8h", desc: "Cierre y transferencia al negocio. Presentación de proyectos, validación en contexto real, lecciones aprendidas.", status: "Próximamente", color: C.red, active: false },
           ].map((m, i) => (
             <Card key={i} accent={m.color} style={{ opacity: m.active ? 1 : 0.7 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -1746,8 +2108,8 @@ export default function Home() {
               <h3>De Entender a Apropiar</h3>
               <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
                 El programa completo combina contenidos conceptuales con <strong style={{ color: C.t1 }}>ejercicios prácticos
-                aplicados al contexto de Pactia</strong>. Los modulos 1 y 2 (6h) son para todo el grupo completo.
-                Los modulos 3 a 6 (30h) se trabajan en grupos de maximo 25, con mentoría directa y desarrollo de proyectos reales.
+                aplicados al contexto de Pactia</strong>. Los módulos 1 y 2 (6h) son para todo el grupo completo.
+                Los módulos 3 a 6 (30h) se trabajan en grupos de máximo 25, con mentoría directa y desarrollo de proyectos reales.
               </p>
             </div>
           </div>
@@ -1770,7 +2132,7 @@ export default function Home() {
             La pregunta ya no es si adoptar IA, sino qué tan rápido
           </h2>
           <p style={{ color: C.t2, fontSize: "1rem", lineHeight: 1.7, maxWidth: 600, margin: "20px auto 0" }}>
-            Pactia tiene la escala, los datos y la vision. SinergIA es el camino para convertir esa ventaja en accion.
+            Pactia tiene la escala, los datos y la visión. SinergIA es el camino para convertir esa ventaja en acción.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 32 }}>
             <div style={{
@@ -1809,7 +2171,7 @@ export default function Home() {
       }}>
         <div>
           <div style={{ fontWeight: 900, fontSize: ".85rem", color: C.azure, letterSpacing: 2, fontStyle: "italic" }}>SinergIA</div>
-          <div style={{ fontSize: ".72rem", color: C.t3, marginTop: 4 }}>IA y Analitica &mdash; Pactia x NODO EAFIT</div>
+          <div style={{ fontSize: ".72rem", color: C.t3, marginTop: 4 }}>IA y Analítica &mdash; Pactia x NODO EAFIT</div>
         </div>
         <div style={{ fontSize: ".7rem", color: C.t3 }}>
           Sesión 1 de 6 &bull; Módulo: Entender &bull; 2026
