@@ -387,6 +387,179 @@ function PipelineStep({ step, title, desc, icon, color, active, onClick }: {
   );
 }
 
+/* ───────── EXPECTATIVA VS REALIDAD INTERACTIVO ───────── */
+function ExpectativaVsRealidad() {
+  const [activePhase, setActivePhase] = useState<string | null>(null);
+  const [showReality, setShowReality] = useState(false);
+
+  const phases = [
+    {
+      id: "datos", label: "Datos", color: C.azure, icon: "🗄️",
+      steps: ["Recopilación", "Almacenamiento", "Síntesis"],
+      detail: "Antes de cualquier modelo, hay que identificar, recopilar y organizar los datos. En real estate esto incluye contratos, datos de sensores, reportes financieros, imágenes de activos y datos de mercado. Sin esta base, nada funciona.",
+      pct: "20%", effort: "del esfuerzo total",
+    },
+    {
+      id: "ciencia", label: "Ciencia de Datos", color: C.green, icon: "🔬",
+      steps: ["Exploración", "Limpieza", "Normalización", "Preparación", "Selección de modelo", "Entrenamiento", "Evaluación", "Ajuste"],
+      detail: "El corazón técnico: explorar los datos, limpiarlos (el 80% del tiempo se va aquí), normalizarlos, seleccionar el modelo adecuado, entrenarlo, evaluarlo y ajustarlo. Incluye ingeniería de datos y modelado.",
+      pct: "60%", effort: "del esfuerzo total",
+    },
+    {
+      id: "valor", label: "Valor", color: C.yellow, icon: "💎",
+      steps: ["Puesta en producción", "Registro", "Despliegue", "Monitorización", "Reentrenamiento"],
+      detail: "Llevar el modelo a producción es solo el inicio. Hay que registrarlo, desplegarlo, monitorearlo continuamente y reentrenarlo cuando los datos cambien. Un modelo sin monitoreo se degrada con el tiempo.",
+      pct: "20%", effort: "del esfuerzo total",
+    },
+  ];
+
+  const restrictions = [
+    { label: "Legal", desc: "Regulaciones de protección de datos (Ley 1581 en Colombia), contratos de confidencialidad, normativa sectorial", color: C.purple, icon: "⚖️" },
+    { label: "Ética / Transparencia", desc: "Explicabilidad de las decisiones de IA, equidad en pricing y selección, documentación de procesos", color: C.azure, icon: "🔍" },
+    { label: "Histórico (sesgos)", desc: "Los datos históricos pueden contener sesgos que la IA amplifica: discriminación en valoraciones, patrones desactualizados", color: C.yellow, icon: "⚠️" },
+    { label: "Seguridad", desc: "Protección contra ataques adversariales, acceso no autorizado a modelos, filtración de datos sensibles", color: C.red, icon: "🛡️" },
+  ];
+
+  return (
+    <div style={{ margin: "36px 0" }}>
+      {/* Toggle */}
+      <div style={{ display: "flex", gap: 4, background: C.dark2, borderRadius: 11, padding: 3, marginBottom: 24 }}>
+        <button onClick={() => setShowReality(false)} style={{
+          flex: 1, padding: "12px 18px", background: !showReality ? C.red : "transparent",
+          border: "none", color: !showReality ? "#fff" : C.t2,
+          fontFamily: "'Inter',sans-serif", fontSize: ".82rem", fontWeight: 700,
+          borderRadius: 9, cursor: "pointer", transition: ".3s",
+        }}>❌ Cómo creen las empresas que es</button>
+        <button onClick={() => setShowReality(true)} style={{
+          flex: 1, padding: "12px 18px", background: showReality ? C.green : "transparent",
+          border: "none", color: showReality ? C.dark : C.t2,
+          fontFamily: "'Inter',sans-serif", fontSize: ".82rem", fontWeight: 700,
+          borderRadius: 9, cursor: "pointer", transition: ".3s",
+        }}>✅ Cómo es en realidad</button>
+      </div>
+
+      {!showReality ? (
+        /* EXPECTATIVA */
+        <div style={{
+          background: C.dark2, border: `1px solid rgba(248,113,113,.15)`, borderRadius: 16, padding: 40, textAlign: "center",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, marginBottom: 32 }}>
+            {[
+              { label: "Datos", emoji: "📊", color: C.azure },
+              { label: "→", color: C.t3 },
+              { label: "IA", emoji: "🤖", color: C.purple },
+              { label: "→", color: C.t3 },
+              { label: "Valor", emoji: "💰", color: C.green },
+            ].map((item, i) => (
+              item.label === "→" ? (
+                <div key={i} style={{ fontSize: "2rem", color: C.t3, fontWeight: 900 }}>→</div>
+              ) : (
+                <div key={i} style={{
+                  padding: "32px 40px", background: `${item.color}12`, borderRadius: 16,
+                  border: `2px solid ${item.color}30`, textAlign: "center", flex: 1, maxWidth: 200,
+                }}>
+                  <div style={{ fontSize: "2.5rem", marginBottom: 8 }}>{item.emoji}</div>
+                  <div style={{ fontSize: "1.2rem", fontWeight: 800, color: item.color }}>{item.label}</div>
+                </div>
+              )
+            ))}
+          </div>
+          <p style={{ color: C.t3, fontSize: ".9rem", fontStyle: "italic", maxWidth: 500, margin: "0 auto" }}>
+            &ldquo;Tenemos datos, metemos IA, y sale valor&rdquo; — el mito de los 3 pasos
+          </p>
+          <div style={{
+            marginTop: 24, padding: 16, background: "rgba(248,113,113,.06)", borderRadius: 10,
+            border: "1px solid rgba(248,113,113,.15)",
+          }}>
+            <p style={{ color: C.red, fontSize: ".82rem", fontWeight: 600 }}>
+              ⚠️ El 85% de los proyectos de IA fracasan por esta mentalidad simplista. Haz clic en &ldquo;Cómo es en realidad&rdquo; para ver el proceso completo.
+            </p>
+          </div>
+        </div>
+      ) : (
+        /* REALIDAD — INTERACTIVO */
+        <div style={{ background: C.dark2, border: `1px solid rgba(52,211,153,.2)`, borderRadius: 16, padding: 32 }}>
+          {/* Pipeline interactivo */}
+          <div style={{ display: "flex", gap: 0, marginBottom: 20, borderRadius: 14, overflow: "hidden", border: `1px solid ${C.dark4}` }}>
+            {phases.map((phase, i) => (
+              <div key={phase.id} onClick={() => setActivePhase(activePhase === phase.id ? null : phase.id)} style={{
+                flex: phase.id === "ciencia" ? 2 : 1, padding: "20px 16px", textAlign: "center",
+                cursor: "pointer", transition: ".3s",
+                borderRight: i < 2 ? `1px solid ${C.dark4}` : "none",
+                background: activePhase === phase.id ? `${phase.color}10` : C.dark3,
+                borderBottom: activePhase === phase.id ? `3px solid ${phase.color}` : `3px solid transparent`,
+              }}>
+                <div style={{ fontSize: "1.5rem", marginBottom: 6 }}>{phase.icon}</div>
+                <div style={{ fontSize: ".85rem", fontWeight: 800, color: activePhase === phase.id ? phase.color : C.t1, marginBottom: 6 }}>{phase.label}</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: phase.color }}>{phase.pct}</div>
+                <div style={{ fontSize: ".6rem", color: C.t3, textTransform: "uppercase", letterSpacing: 1 }}>{phase.effort}</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 3, marginTop: 10, justifyContent: "center" }}>
+                  {phase.steps.map((s, j) => (
+                    <span key={j} style={{
+                      padding: "3px 8px", borderRadius: 6, fontSize: ".58rem", fontWeight: 600,
+                      background: activePhase === phase.id ? `${phase.color}15` : C.dark4,
+                      color: activePhase === phase.id ? phase.color : C.t3,
+                      transition: ".3s",
+                    }}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Detalle expandible */}
+          {activePhase && (
+            <div style={{
+              padding: 20, background: C.dark3, borderRadius: 12, marginBottom: 20,
+              borderLeft: `3px solid ${phases.find(p => p.id === activePhase)?.color}`,
+            }}>
+              <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7 }}>
+                {phases.find(p => p.id === activePhase)?.detail}
+              </p>
+            </div>
+          )}
+
+          {/* Restricciones interactivas */}
+          <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.t3, textTransform: "uppercase", letterSpacing: 2, marginBottom: 10 }}>
+            Restricciones transversales — haz clic para explorar:
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
+            {restrictions.map((r, i) => (
+              <div key={i} onClick={() => setActivePhase(activePhase === `r-${i}` ? null : `r-${i}`)} style={{
+                padding: "10px 12px", background: activePhase === `r-${i}` ? r.color : `${r.color}15`,
+                borderRadius: 8, cursor: "pointer", transition: ".3s", textAlign: "center",
+                border: `1px solid ${activePhase === `r-${i}` ? r.color : "transparent"}`,
+              }}>
+                <div style={{ fontSize: "1rem", marginBottom: 4 }}>{r.icon}</div>
+                <div style={{ fontSize: ".7rem", fontWeight: 700, color: activePhase === `r-${i}` ? C.dark : r.color }}>{r.label}</div>
+              </div>
+            ))}
+          </div>
+          {restrictions.map((r, i) => activePhase === `r-${i}` && (
+            <div key={`d-${i}`} style={{
+              marginTop: 12, padding: 16, background: C.dark3, borderRadius: 10,
+              borderLeft: `3px solid ${r.color}`, fontSize: ".82rem", color: C.t2, lineHeight: 1.6,
+            }}>{r.desc}</div>
+          ))}
+
+          {/* Callout */}
+          <div style={{
+            marginTop: 20, padding: 16, background: "rgba(0,169,224,.04)", borderRadius: 10,
+            borderLeft: `3px solid ${C.azure}`,
+          }}>
+            <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
+              <strong style={{ color: C.t1 }}>La lección clave:</strong> Hay un proceso completo de{" "}
+              <strong style={{ color: C.azure }}>recopilación, limpieza, ingeniería, modelado, evaluación y despliegue</strong>,
+              cruzado por restricciones de ética, seguridad y legalidad.{" "}
+              <strong style={{ color: C.green }}>El 85% de los proyectos de IA que fracasan lo hacen por problemas de datos, no de algoritmos.</strong>
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════ */
@@ -612,156 +785,8 @@ export default function Home() {
           Antes de hablar de algoritmos, hablemos de lo que realmente importa: <strong style={{ color: C.azure }}>los datos</strong>.
         </p>
 
-        {/* Expectativa vs Realidad */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28, margin: "36px 0" }}>
-          {/* Cómo creen que es */}
-          <div style={{
-            background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 16, padding: 32, position: "relative",
-          }}>
-            <div style={{
-              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
-              color: C.red, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
-            }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
-              Expectativa
-            </div>
-            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 24 }}>Cómo creen las empresas que es la IA</h3>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
-              {[
-                { label: "Datos", color: C.azure, bg: "rgba(0,169,224,.12)" },
-                { label: "→", color: C.t3, bg: "transparent" },
-                { label: "IA", color: C.purple, bg: "rgba(167,139,250,.12)" },
-                { label: "→", color: C.t3, bg: "transparent" },
-                { label: "Valor", color: C.green, bg: "rgba(52,211,153,.12)" },
-              ].map((item, i) => (
-                item.label === "→" ? (
-                  <div key={i} style={{ fontSize: "1.5rem", color: C.t3, fontWeight: 900 }}>→</div>
-                ) : (
-                  <div key={i} style={{
-                    padding: "28px 32px", background: item.bg, borderRadius: 12,
-                    border: `1px solid ${item.color}30`, textAlign: "center", flex: 1,
-                  }}>
-                    <div style={{ fontSize: "1.1rem", fontWeight: 800, color: item.color }}>{item.label}</div>
-                  </div>
-                )
-              ))}
-            </div>
-            <p style={{ color: C.t3, fontSize: ".78rem", textAlign: "center", marginTop: 16, fontStyle: "italic" }}>
-              &ldquo;Tenemos datos, metemos IA, y sale valor&rdquo; — el mito de los 3 pasos
-            </p>
-          </div>
-
-          {/* Cómo es en realidad */}
-          <div style={{
-            background: C.dark2, border: `1px solid rgba(52,211,153,.2)`, borderRadius: 16, padding: 32,
-          }}>
-            <div style={{
-              fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
-              color: C.green, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
-            }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
-              Realidad
-            </div>
-            <h3 style={{ color: C.t1, fontSize: "1.2rem", marginBottom: 20 }}>Cómo es en realidad</h3>
-
-            {/* Three main columns */}
-            <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-              {/* Datos column */}
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  padding: "8px 12px", background: "rgba(0,169,224,.1)", borderRadius: "8px 8px 0 0",
-                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.azure,
-                  borderBottom: `1px solid ${C.azure}30`,
-                }}>Datos</div>
-                <div style={{ background: "rgba(0,169,224,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
-                  {["Recopilación", "Almacenamiento", "Síntesis"].map((t, i) => (
-                    <div key={i} style={{
-                      padding: "5px 8px", margin: "3px 0", background: C.dark3, borderRadius: 6,
-                      fontSize: ".65rem", color: C.t2, textAlign: "center", fontWeight: 600,
-                    }}>{t}</div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", color: C.t3, fontSize: "1.2rem", fontWeight: 900 }}>→</div>
-
-              {/* Ciencia de datos column */}
-              <div style={{ flex: 2 }}>
-                <div style={{
-                  padding: "8px 12px", background: "rgba(52,211,153,.1)", borderRadius: "8px 8px 0 0",
-                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.green,
-                  borderBottom: `1px solid ${C.green}30`,
-                }}>Ciencia de datos</div>
-                <div style={{ background: "rgba(52,211,153,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
-                  <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
-                    <div style={{ flex: 1, padding: "4px 6px", background: "rgba(0,169,224,.08)", borderRadius: 6, fontSize: ".6rem", color: C.azure, textAlign: "center", fontWeight: 600 }}>Ing. de Datos</div>
-                    <div style={{ flex: 1, padding: "4px 6px", background: "rgba(167,139,250,.08)", borderRadius: 6, fontSize: ".6rem", color: C.purple, textAlign: "center", fontWeight: 600 }}>Modelado</div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 3 }}>
-                    {["Exploración", "Limpieza", "Normalización", "Escalado", "Selección", "Entrenamiento", "Evaluación", "Ajuste"].map((t, i) => (
-                      <div key={i} style={{
-                        padding: "4px 3px", background: i < 4 ? "rgba(0,169,224,.06)" : "rgba(167,139,250,.06)",
-                        borderRadius: 4, fontSize: ".55rem", color: C.t2, textAlign: "center", fontWeight: 600,
-                      }}>{t}</div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", color: C.t3, fontSize: "1.2rem", fontWeight: 900 }}>→</div>
-
-              {/* Valor column */}
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  padding: "8px 12px", background: "rgba(251,191,36,.1)", borderRadius: "8px 8px 0 0",
-                  textAlign: "center", fontWeight: 700, fontSize: ".78rem", color: C.yellow,
-                  borderBottom: `1px solid ${C.yellow}30`,
-                }}>Valor</div>
-                <div style={{ background: "rgba(251,191,36,.04)", borderRadius: "0 0 8px 8px", padding: "8px 6px" }}>
-                  <div style={{
-                    padding: "4px 8px", margin: "3px 0", background: "rgba(251,191,36,.08)", borderRadius: 6,
-                    fontSize: ".62rem", color: C.yellow, textAlign: "center", fontWeight: 600,
-                  }}>Puesta en producción</div>
-                  {["Registro", "Despliegue", "Monitoreo", "Reentrenamiento"].map((t, i) => (
-                    <div key={i} style={{
-                      padding: "4px 8px", margin: "3px 0", background: C.dark3, borderRadius: 6,
-                      fontSize: ".6rem", color: C.t2, textAlign: "center", fontWeight: 600,
-                    }}>{t}</div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Restricciones */}
-            <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: ".65rem", fontWeight: 700, color: C.t3, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>Restricciones transversales:</div>
-              {[
-                { label: "Legal", color: "rgba(167,139,250,.15)", text: C.purple },
-                { label: "Ética / Transparencia", color: "rgba(0,169,224,.1)", text: C.azure },
-                { label: "Histórico (sesgos)", color: "rgba(251,191,36,.1)", text: C.yellow },
-                { label: "Seguridad", color: "rgba(248,113,113,.1)", text: C.red },
-              ].map((r, i) => (
-                <div key={i} style={{
-                  padding: "5px 12px", margin: "3px 0", background: r.color, borderRadius: 6,
-                  fontSize: ".65rem", color: r.text, fontWeight: 600, textAlign: "center",
-                }}>{r.label}</div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div style={{
-          padding: 20, background: "rgba(0,169,224,.04)", borderRadius: 12, borderLeft: `3px solid ${C.azure}`,
-          marginBottom: 12,
-        }}>
-          <p style={{ color: C.t2, fontSize: ".84rem", lineHeight: 1.7 }}>
-            <strong style={{ color: C.t1 }}>La lección clave:</strong> La IA no es solo &ldquo;meter datos y sacar valor&rdquo;.
-            Hay un proceso completo de <strong style={{ color: C.azure }}>recopilación, limpieza, ingeniería, modelado, evaluación y despliegue</strong>,
-            cruzado por restricciones de ética, seguridad y legalidad. Entender esto desde el inicio evita expectativas
-            irreales y proyectos fallidos. <strong style={{ color: C.green }}>El 85% de los proyectos de IA que fracasan
-            lo hacen por problemas de datos, no de algoritmos.</strong>
-          </p>
-        </div>
+        {/* Expectativa vs Realidad — INTERACTIVO */}
+        <ExpectativaVsRealidad />
 
         {/* Big Data: Las 5 V expandidas */}
         <h3 style={{ marginTop: 40 }}>Big Data: Las 5 V que todo líder debe entender</h3>
