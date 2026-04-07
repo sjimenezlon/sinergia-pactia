@@ -825,7 +825,7 @@ export default function Home() {
               v: "Valor", icon: "💎", color: C.yellow,
               what: "La capacidad de extraer insights accionables",
               pactia: "El valor no está en tener datos, sino en convertirlos en decisiones: ¿Cuál activo tiene mayor riesgo de vacancia? ¿Dónde invertir en eficiencia energética? ¿Qué arrendatario necesita atención? Sin análisis, los datos son solo ruido.",
-              number: "Solo el 32% de los datos empresariales se usa efectivamente (Forrester)"
+              number: "El 68% de los datos empresariales no se aprovecha (Seagate/IDC)"
             },
           ].map((item, i) => (
             <Card key={i} accent={item.color} style={{ padding: 20 }}>
@@ -1079,7 +1079,7 @@ export default function Home() {
                     <Counter value="80%" label="Tiempo en limpiar datos" sub="En un proyecto típico de IA" color={C.red} />
                     <Counter value="$3.1T" label="Costo de mala calidad" sub="Anual en EE.UU. (IBM)" color={C.orange} />
                     <Counter value="1 de 3" label="Registros con errores" sub="Promedio empresarial" color={C.yellow} />
-                    <Counter value="27%" label="Datos de ingresos incorrectos" sub="Promedio por empresa (Gartner)" color={C.purple} />
+                    <Counter value="68%" label="Datos no aprovechados" sub="Promedio empresarial (Seagate/IDC)" color={C.purple} />
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                     <Card accent={C.green}>
@@ -1413,7 +1413,7 @@ export default function Home() {
         {/* Market stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, margin: "36px 0" }}>
           <Counter value="$303B" label="Mercado IA en Real Estate 2025" sub="Business Research Co." />
-          <Counter value="$989B" label="Proyección 2029" sub="CAGR 33.9%" color={C.green} />
+          <Counter value="$989B" label="Proyección 2029" sub="CAGR 34.4%" color={C.green} />
           <Counter value="90%+" label="Firmas líder con IA como prioridad" color={C.purple} />
           <Counter value="72%" label="Propietarios planean invertir en IA" color={C.orange} />
         </div>
@@ -1452,11 +1452,11 @@ export default function Home() {
           <CaseCard
             company="JLL"
             title="Carbon Pathfinder + IA Generativa"
-            desc="JLL analiza 25+ trillones de puntos de datos con IA. Su Carbon Pathfinder logra 10% de reducción energética ($2M USD de ahorro por 10M ft2). Su asistente de IA abstrae contratos 60% más rápido."
+            desc="JLL analiza 25+ trillones de puntos de datos con IA. Su plataforma Hank logra 10-40% de reducción energética en edificios. Su asistente de IA con GPT acelera el análisis de contratos de arrendamiento."
             metrics={[
-              { value: "10%", label: "Reducción energética", color: C.green },
-              { value: "60%", label: "Más rápido en contratos", color: C.azure },
-              { value: "$2M", label: "Ahorro anual", color: C.orange },
+              { value: "10-40%", label: "Reducción energética", color: C.green },
+              { value: "25T+", label: "Puntos de datos", color: C.azure },
+              { value: "708%", label: "ROI (caso Hank)", color: C.orange },
             ]}
             source="Fuente: JLL Research 2025"
           />
@@ -1478,7 +1478,7 @@ export default function Home() {
             metrics={[
               { value: "20K", label: "Sitios gestionados", color: C.azure },
               { value: "1B+", label: "ft2 con IA", color: C.green },
-              { value: "17.6%", label: "Reducción costos op.", color: C.orange },
+              { value: "~20%", label: "Reducción costos mant.", color: C.orange },
             ]}
             source="Fuente: CBRE / Facilities Dive 2025"
           />
@@ -1499,10 +1499,10 @@ export default function Home() {
           <CaseCard
             company="Honeywell"
             title="Agentes IA para HVAC"
-            desc="Los agentes de IA para sistemas HVAC reducen costos energéticos en 35%. 84% de tomadores de decisión en edificios comerciales planean aumentar el uso de IA."
+            desc="Los agentes de IA para sistemas HVAC reducen costos energéticos en 10-20%. Más del 80% de tomadores de decisión en edificios comerciales planean aumentar el uso de IA."
             metrics={[
-              { value: "35%", label: "Reducción costos HVAC", color: C.green },
-              { value: "84%", label: "Planean más IA", color: C.purple },
+              { value: "10-20%", label: "Ahorro energético HVAC", color: C.green },
+              { value: "80%+", label: "Planean más IA", color: C.purple },
               { value: "14%", label: "Ahorro promedio smart building", color: C.azure },
             ]}
             source="Fuente: Honeywell / Panorad AI 2025"
@@ -1621,7 +1621,7 @@ export default function Home() {
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   {[
-                    { t: "Optimización HVAC con IA", d: "35% de reducción en costos energéticos. Complementa los paneles solares del portafolio optimizando cuándo usar solar vs. red.", icon: "⚡" },
+                    { t: "Optimización HVAC con IA", d: "Hasta 20% de reducción en costos energéticos. Complementa los paneles solares del portafolio optimizando cuándo usar solar vs. red.", icon: "⚡" },
                     { t: "Digital Twins", d: "Gemelos digitales del portafolio para simular escenarios de descarbonización antes de invertir capital. Probar retrofits virtuales.", icon: "🔄" },
                     { t: "Reportes ESG automatizados", d: "IA automatiza la recopilación y generación de reportes de sostenibilidad. Reduce carga operativa y mejora precisión.", icon: "📋" },
                     { t: "Iluminación inteligente", d: "LED + sensores de ocupación + programación IA. 10-20% de ahorro adicional en todos los activos del portafolio.", icon: "💡" },
@@ -1647,7 +1647,7 @@ export default function Home() {
             "Eliminar la necesidad de datos históricos",
           ]}
           correct={1}
-          feedback="Exacto. Los quick wins de IA para Pactia están en: 1) Análisis de contratos (60% más rápido, detectar cláusulas perdidas), 2) Mantenimiento predictivo (40% menos costos), y 3) Optimización energética (35% ahorro en HVAC). Estos tres generan ROI medible en 6-12 meses."
+          feedback="Exacto. Los quick wins de IA para Pactia están en: 1) Análisis de contratos (60% más rápido, detectar cláusulas perdidas), 2) Mantenimiento predictivo (40% menos costos), y 3) Optimización energética (10-20% ahorro en HVAC). Estos tres generan ROI medible en 6-12 meses."
         />
       </Section>
 
@@ -1982,24 +1982,24 @@ export default function Home() {
                 fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
                 background: `linear-gradient(135deg,${C.green},${C.azureLight})`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>-40%</div>
-              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Menos incidentes de datos</div>
+              }}>80%</div>
+              <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Gobernanza falla sin urgencia</div>
               <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
-                Las organizaciones con gobernanza fuerte ven 40% menos incidentes relacionados con datos
+                Gartner predice que el 80% de las iniciativas de gobernanza de datos fallarán para 2027 sin un sentido claro de urgencia
               </div>
-              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Gartner</div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Gartner 2024</div>
             </Card>
             <Card accent={C.azure} style={{ textAlign: "center", padding: 24 }}>
               <div style={{
                 fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
                 background: `linear-gradient(135deg,${C.azure},${C.azureLight})`,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>3:1</div>
+              }}>3.5:1</div>
               <div style={{ fontSize: ".78rem", color: C.t1, fontWeight: 700, marginTop: 8, marginBottom: 6 }}>Retorno por cada $1 invertido</div>
               <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
-                Las empresas que invierten en calidad de datos ven $3 de retorno por cada $1 invertido
+                Las empresas que invierten en datos e IA ven ~$3.50 de retorno por cada $1 invertido
               </div>
-              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Experian</div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Microsoft / Industry Avg.</div>
             </Card>
             <Card accent={C.purple} style={{ textAlign: "center", padding: 24 }}>
               <div style={{
@@ -2023,7 +2023,7 @@ export default function Home() {
               <div style={{ fontSize: ".72rem", color: C.t3, lineHeight: 1.5 }}>
                 El 68% de los datos dentro de las empresas nunca se analizan ni se aprovechan
               </div>
-              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Forrester</div>
+              <div style={{ fontSize: ".65rem", color: C.t3, marginTop: 8, fontStyle: "italic" }}>Seagate / IDC</div>
             </Card>
           </div>
         </div>
