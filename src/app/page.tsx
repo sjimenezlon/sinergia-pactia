@@ -291,7 +291,7 @@ function CaseCard({ company, title, desc, metrics, source }: {
 
 /* ───────── TOKEN DEMO ───────── */
 function TokenDemo() {
-  const [text, setText] = useState("Pactia gestiona 42 activos inmobiliarios en Colombia con un valor de COP 3.6 billones");
+  const [text, setText] = useState("Pactia gestiona un portafolio diversificado de activos inmobiliarios en Colombia y Panamá");
 
   const tokenize = (input: string): string[] => {
     if (!input) return [];
@@ -448,7 +448,7 @@ export default function Home() {
             {[
               { v: "36h", l: "Programa total" },
               { v: "6", l: "Módulos" },
-              { v: "170", l: "Participantes" },
+              { v: "6", l: "Sesiones" },
               { v: "3h", l: "Esta sesión" },
             ].map((s, i) => (
               <div key={i}>
@@ -471,40 +471,32 @@ export default function Home() {
           potencial de rentabilidad, buscando ser <strong style={{ color: C.azure }}>la primera opción en inversión inmobiliaria en Colombia</strong>.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, margin: "36px 0" }}>
-          <Counter value="COP 3.6T" label="Activos bajo administración" />
-          <Counter value="42" label="Activos en operación" sub="683,498 m2 arrendables" />
-          <Counter value="90.9%" label="Ocupación física" sub="Portafolio no hotelero" />
-          <Counter value="IPC+7.5%" label="Expectativa de rentabilidad" color={C.green} />
-        </div>
-
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24, marginTop: 36 }}>
           <Card accent={C.azure}>
             <div style={{ fontSize: "2rem", marginBottom: 14 }}>🏬</div>
             <h3>Diversificación</h3>
             <p style={{ color: C.t2, fontSize: ".86rem", lineHeight: 1.6 }}>
-              <strong style={{ color: C.t1 }}>14</strong> activos comerciales &bull; <strong style={{ color: C.t1 }}>13</strong> almacenamiento &bull;{" "}
-              <strong style={{ color: C.t1 }}>11</strong> oficinas &bull; <strong style={{ color: C.t1 }}>4</strong> alojamiento<br />
-              Presencia en <strong style={{ color: C.t1 }}>11 departamentos</strong> de Colombia + Panama
+              Portafolio diversificado con activos <strong style={{ color: C.t1 }}>comerciales, de almacenamiento,
+              oficinas y alojamiento</strong>.<br />
+              Presencia en <strong style={{ color: C.t1 }}>múltiples departamentos</strong> de Colombia + Panamá
             </p>
           </Card>
           <Card accent={C.green}>
             <div style={{ fontSize: "2rem", marginBottom: 14 }}>🌱</div>
             <h3 style={{ color: C.green }}>Sostenibilidad</h3>
             <p style={{ color: C.t2, fontSize: ".86rem", lineHeight: 1.6 }}>
-              <strong style={{ color: C.t1 }}>79</strong> hectareas de bosques protegidos &bull;{" "}
-              <strong style={{ color: C.t1 }}>844</strong> toneladas CO2 reducidas &bull;{" "}
-              <strong style={{ color: C.t1 }}>+4,000</strong> paneles solares instalados &bull;{" "}
-              <strong style={{ color: C.t1 }}>43%</strong> recuperación de residuos
+              Compromiso con <strong style={{ color: C.t1 }}>bosques protegidos, reducción de CO2,
+              energía solar</strong> y <strong style={{ color: C.t1 }}>economía circular</strong>.
+              Sostenibilidad como motor de cambio positivo.
             </p>
           </Card>
           <Card accent={C.orange}>
             <div style={{ fontSize: "2rem", marginBottom: 14 }}>📈</div>
-            <h3 style={{ color: C.orange }}>Capacidad de proyectos</h3>
+            <h3 style={{ color: C.orange }}>Trayectoria</h3>
             <p style={{ color: C.t2, fontSize: ".86rem", lineHeight: 1.6 }}>
-              <strong style={{ color: C.t1 }}>$1.1 billones COP</strong> en proyectos desarrollados &bull;{" "}
-              <strong style={{ color: C.t1 }}>450,000 m2</strong> construidos &bull; Marcas:{" "}
-              <strong style={{ color: C.t1 }}>Gran Plaza, Logica, Buro, U-Storage</strong>
+              Amplio historial de <strong style={{ color: C.t1 }}>proyectos desarrollados</strong> con
+              cientos de miles de m2 construidos. Marcas reconocidas en los segmentos comercial,
+              logístico, corporativo y de almacenamiento.
             </p>
           </Card>
         </div>
@@ -517,7 +509,7 @@ export default function Home() {
           <div>
             <h3>¿Por que IA para Pactia?</h3>
             <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
-              Con <strong style={{ color: C.t1 }}>42 activos diversificados</strong>, millones de m2 en operación y un
+              Con un <strong style={{ color: C.t1 }}>portafolio diversificado</strong>, amplia presencia geográfica y un
               compromiso firme con la sostenibilidad, Pactia tiene la escala y complejidad perfecta para que la IA
               genere valor real: desde <strong style={{ color: C.t1 }}>optimizar operaciones</strong> hasta{" "}
               <strong style={{ color: C.t1 }}>predecir tendencias del mercado</strong> y{" "}
@@ -781,13 +773,13 @@ export default function Home() {
             {
               v: "Volumen", icon: "📊", color: C.azure,
               what: "La cantidad masiva de datos generados",
-              pactia: "42 activos generan datos de ocupación, energía, mantenimiento, financieros las 24 horas. Cada sensor IoT produce ~500 MB/día. Un solo centro comercial Gran Plaza genera miles de transacciones diarias.",
+              pactia: "Los activos inmobiliarios generan datos de ocupación, energía, mantenimiento y financieros las 24 horas. Cada sensor IoT produce ~500 MB/día. Un solo centro comercial genera miles de transacciones diarias.",
               number: "~2.5 quintillones de bytes de datos se crean cada dia en el mundo"
             },
             {
               v: "Velocidad", icon: "⚡", color: C.green,
               what: "La rapidez con que se generan y deben procesarse",
-              pactia: "Los datos de consumo energético de los 4,500 paneles solares, los sistemas HVAC, el tráfico peatonal en centros comerciales — todo llega en tiempo real. La diferencia entre detectar un pico de consumo en minutos vs. dias puede significar miles de dólares.",
+              pactia: "Los datos de consumo energético, paneles solares, sistemas HVAC, el tráfico peatonal en centros comerciales — todo llega en tiempo real. La diferencia entre detectar un pico de consumo en minutos vs. días puede significar miles de dólares.",
               number: "Los sistemas modernos procesan millones de eventos por segundo"
             },
             {
@@ -799,7 +791,7 @@ export default function Home() {
             {
               v: "Veracidad", icon: "✅", color: C.orange,
               what: "La confiabilidad y precision de los datos",
-              pactia: "Un sensor de temperatura descalibrado, un contrato mal digitalizado, un dato de mercado desactualizado — un solo dato erróneo puede llevar a decisiones de inversión equivocadas. La veracidad es crítica cuando se manejan COP 3.6 billones.",
+              pactia: "Un sensor de temperatura descalibrado, un contrato mal digitalizado, un dato de mercado desactualizado — un solo dato erróneo puede llevar a decisiones de inversión equivocadas. La veracidad es crítica en un fondo de inversión inmobiliaria de esta escala.",
               number: "IBM estima que datos de mala calidad cuestan $3.1 trillones anuales solo en EE.UU."
             },
             {
@@ -1020,7 +1012,7 @@ export default function Home() {
                     </p>
                     <Accordion items={[
                       { title: "Sistemas internos (ERP, CRM)", content: "SAP, Oracle, o sistemas propios de gestión de activos. Aquí viven los datos financieros, contratos, inventarios. Son la columna vertebral pero a menudo están aislados en silos." },
-                      { title: "Sensores IoT y Building Management", content: "Los sistemas BMS de los 42 activos generan datos continuos: temperatura, humedad, consumo eléctrico, HVAC, ascensores. Cada sensor es una fuente de datos que la IA puede aprovechar." },
+                      { title: "Sensores IoT y Building Management", content: "Los sistemas BMS de los activos generan datos continuos: temperatura, humedad, consumo eléctrico, HVAC, ascensores. Cada sensor es una fuente de datos que la IA puede aprovechar." },
                       { title: "Documentos físicos y digitales", content: "Contratos PDF, planos CAD, fotografías de inspecciones, actas de reunión. El 80% de la información valiosa está en formatos no estructurados que ahora la GenAI puede procesar." },
                       { title: "Datos externos y de mercado", content: "DANE, Camacol, Galería Inmobiliaria, datos catastrales, índices de construcción. Complementan los datos internos para decisiones de inversión más informadas." },
                       { title: "Datos de terceros y arrendatarios", content: "Historiales crediticios, patrones de pago, feedback de encuestas de satisfaccion. Permiten predecir rotacion y personalizar la experiencia." },
@@ -1068,7 +1060,7 @@ export default function Home() {
                       {[
                         { dim: "Completitud", desc: "¿Hay campos vacíos? ¿Faltan períodos? Un dataset de ocupación con meses faltantes no sirve para predicción.", pct: 95 },
                         { dim: "Exactitud", desc: "¿Los valores son correctos? Un área arrendable mal registrada distorsiona toda la valuación.", pct: 90 },
-                        { dim: "Consistencia", desc: "¿El mismo concepto se registra igual en todos los sistemas? Si un activo se llama 'GP Bello' en uno y 'Gran Plaza Bello' en otro, la IA no los conecta.", pct: 85 },
+                        { dim: "Consistencia", desc: "¿El mismo concepto se registra igual en todos los sistemas? Si un activo se llama de una forma en un sistema y diferente en otro, la IA no los conecta.", pct: 85 },
                         { dim: "Oportunidad", desc: "¿Los datos están actualizados? Datos de ocupación de hace 6 meses son irrelevantes para decisiones de hoy.", pct: 80 },
                         { dim: "Validez", desc: "¿Los datos cumplen las reglas del negocio? Una tasa de ocupación de 120% indica un problema de registro.", pct: 88 },
                         { dim: "Unicidad", desc: "¿Hay registros duplicados? Dos entradas para el mismo arrendatario generan reportes incorrectos.", pct: 92 },
@@ -1169,7 +1161,7 @@ export default function Home() {
                     <h3 style={{ color: C.orange }}>Gobernanza de datos: no es opcional</h3>
                     <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7, marginBottom: 16 }}>
                       Sin gobernanza, los datos se degradan con el tiempo. Para un fondo como Pactia que maneja
-                      COP 3.6 billones, la gobernanza de datos es un imperativo de negocio, no solo un tema de TI.
+                      esta magnitud, la gobernanza de datos es un imperativo de negocio, no solo un tema de TI.
                     </p>
                     {[
                       { t: "Propietarios de datos claros", d: "Cada dataset tiene un responsable que garantiza su calidad y acceso." },
@@ -1367,10 +1359,10 @@ export default function Home() {
                       Pactia genera y puede aprovechar datos de multiples fuentes:
                     </p>
                     <Accordion items={[
-                      { title: "Datos operacionales", content: "Consumo energético de 42 activos, estado de equipos HVAC, ascensores, sistemas de seguridad. Oportunidad: mantenimiento predictivo que reduce costos hasta 40%." },
+                      { title: "Datos operacionales", content: "Consumo energético de los activos del portafolio, estado de equipos HVAC, ascensores, sistemas de seguridad. Oportunidad: mantenimiento predictivo que reduce costos hasta 40%." },
                       { title: "Datos comerciales", content: "Contratos de arrendamiento, tasas de ocupación, pricing por m2, perfil de arrendatarios, rotación. Oportunidad: optimización de pricing dinámico." },
                       { title: "Datos de mercado", content: "Tendencias del sector inmobiliario, tasas de interes, índices de construcción, oferta nueva. Oportunidad: decisión de inversión basada en datos." },
-                      { title: "Datos de sostenibilidad", content: "Huella de carbono, consumo de agua, generación solar de los +4,000 paneles, residuos. Oportunidad: reportes ESG automatizados y optimización energética." },
+                      { title: "Datos de sostenibilidad", content: "Huella de carbono, consumo de agua, generación solar de los paneles instalados, residuos. Oportunidad: reportes ESG automatizados y optimización energética." },
                     ]} />
                   </div>
                 </div>
@@ -1520,7 +1512,7 @@ export default function Home() {
                 {[
                   { t: "Valuación automatizada", d: "Modelos de IA (AVMs) con error mediano de solo 2.8%, vs 10-15% tradicional. Revaluación del portafolio completo en minutos.", icon: "📊", impact: "Alto" },
                   { t: "Selección de sitios", d: "IA reduce tiempo de evaluación de sitios en 80-90%. Análisis de datos sociodemograficos, transito y competencia.", icon: "📍", impact: "Alto" },
-                  { t: "Optimización de ocupación", d: "Con 90.9% de ocupación, IA puede identificar patrones para alcanzar y mantener >95% con pricing dinámico.", icon: "🏢", impact: "Medio-Alto" },
+                  { t: "Optimización de ocupación", d: "IA puede identificar patrones para optimizar la tasa de ocupación con pricing dinámico.", icon: "🏢", impact: "Medio-Alto" },
                   { t: "Inteligencia de contratos", d: "IA abstrae contratos 60% más rápido. JLL descubrió $1M+ en cláusulas de escalamiento no ejecutadas.", icon: "📄", impact: "Alto" },
                 ].map((item, i) => (
                   <Card key={i}>
@@ -1543,9 +1535,9 @@ export default function Home() {
             content: (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                 {[
-                  { t: "Chatbots 24/7", d: "Atención automatizada para arrendatarios en Gran Plaza, Buro y U-Storage. Manejo de consultas, solicitudes de mantenimiento y preguntas frecuentes.", icon: "💬" },
+                  { t: "Chatbots 24/7", d: "Atención automatizada para arrendatarios en los diferentes activos del portafolio. Manejo de consultas, solicitudes de mantenimiento y preguntas frecuentes.", icon: "💬" },
                   { t: "Predicción de rotación", d: "Modelos que analizan patrones de pago, solicitudes de mantenimiento y comunicacion para identificar arrendatarios en riesgo antes del vencimiento.", icon: "🔮" },
-                  { t: "Smart Parking y tráfico", d: "Para los centros comerciales Gran Plaza: analítica de patrones de visitantes para optimizar mix de inquilinos y áreas comunes.", icon: "🅿️" },
+                  { t: "Smart Parking y tráfico", d: "Para los centros comerciales del portafolio: analítica de patrones de visitantes para optimizar mix de inquilinos y áreas comunes.", icon: "🅿️" },
                   { t: "Engagement personalizado", d: "Segmentar arrendatarios por comportamiento y ofrecer amenidades, pricing o incentivos de renovación personalizados.", icon: "🎯" },
                 ].map((item, i) => (
                   <Card key={i}>
@@ -1572,9 +1564,9 @@ export default function Home() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   {[
                     { t: "HVAC predictivo", d: "Los 13 activos de almacenamiento y 11 de oficinas tienen sistemas HVAC significativos. Sensores IoT + IA predicen fallas antes de que ocurran." },
-                    { t: "Ascensores y escaleras", d: "Los centros comerciales Gran Plaza dependen de circulación vertical. IA reduce 90% de fallas inesperadas." },
-                    { t: "Techos y estructuras", d: "Los techos de las bodegas Logica son costosos de reparar reactivamente. IA monitorea y alerta tempranamente." },
-                    { t: "Red de sensores IoT", d: "Monitoreo centralizado de los 683,498 m2 del portafolio. Dashboard unificado con alertas automáticas." },
+                    { t: "Ascensores y escaleras", d: "Los centros comerciales del portafolio dependen de circulación vertical. IA reduce 90% de fallas inesperadas." },
+                    { t: "Techos y estructuras", d: "Los techos de las bodegas logísticas son costosos de reparar reactivamente. IA monitorea y alerta tempranamente." },
+                    { t: "Red de sensores IoT", d: "Monitoreo centralizado de todo el portafolio. Dashboard unificado con alertas automáticas." },
                   ].map((item, i) => (
                     <Card key={i}>
                       <h3>{item.t}</h3>
@@ -1602,10 +1594,10 @@ export default function Home() {
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                   {[
-                    { t: "Optimización HVAC con IA", d: "35% de reducción en costos energeticos. Complementa los 4,500+ paneles solares de Pactia optimizando cuando usar solar vs. red.", icon: "⚡" },
+                    { t: "Optimización HVAC con IA", d: "35% de reducción en costos energeticos. Complementa los paneles solares del portafolio optimizando cuando usar solar vs. red.", icon: "⚡" },
                     { t: "Digital Twins", d: "Gemelos digitales del portafolio para simular escenarios de descarbonizacion antes de invertir capital. Probar retrofits virtuales.", icon: "🔄" },
                     { t: "Reportes ESG automatizados", d: "IA automatiza la recopilación y generación de reportes de sostenibilidad. Reduce carga operativa y mejora precisión.", icon: "📋" },
-                    { t: "Iluminación inteligente", d: "LED + sensores de ocupación + programación IA. 10-20% de ahorro adicional en los 42 activos del portafolio.", icon: "💡" },
+                    { t: "Iluminación inteligente", d: "LED + sensores de ocupación + programación IA. 10-20% de ahorro adicional en todos los activos del portafolio.", icon: "💡" },
                   ].map((item, i) => (
                     <Card key={i}>
                       <div style={{ fontSize: "1.5rem", marginBottom: 12 }}>{item.icon}</div>
@@ -1754,7 +1746,7 @@ export default function Home() {
               <h3>De Entender a Apropiar</h3>
               <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
                 El programa completo combina contenidos conceptuales con <strong style={{ color: C.t1 }}>ejercicios prácticos
-                aplicados al contexto de Pactia</strong>. Los modulos 1 y 2 (6h) son para todo el grupo de 170 personas.
+                aplicados al contexto de Pactia</strong>. Los modulos 1 y 2 (6h) son para todo el grupo completo.
                 Los modulos 3 a 6 (30h) se trabajan en grupos de maximo 25, con mentoría directa y desarrollo de proyectos reales.
               </p>
             </div>
