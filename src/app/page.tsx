@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
 /* ───────── COLOR TOKENS ───────── */
 const C = {
@@ -560,6 +560,304 @@ function ExpectativaVsRealidad() {
   );
 }
 
+/* ───────── TYPING EFFECT ───────── */
+function TypingEffect() {
+  const phrases = [
+    "¿Cómo puede la IA optimizar su portafolio?",
+    "¿Qué datos están sin aprovechar?",
+    "¿Dónde está el mayor ROI?",
+    "¿Cómo reducir costos energéticos con IA?",
+    "¿Qué insights esconden sus contratos?",
+  ];
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = phrases[phraseIdx];
+    if (!deleting && charIdx < current.length) {
+      const t = setTimeout(() => setCharIdx(charIdx + 1), 60);
+      return () => clearTimeout(t);
+    } else if (!deleting && charIdx === current.length) {
+      const t = setTimeout(() => setDeleting(true), 2000);
+      return () => clearTimeout(t);
+    } else if (deleting && charIdx > 0) {
+      const t = setTimeout(() => setCharIdx(charIdx - 1), 30);
+      return () => clearTimeout(t);
+    } else if (deleting && charIdx === 0) {
+      setDeleting(false);
+      setPhraseIdx((phraseIdx + 1) % phrases.length);
+    }
+  }, [charIdx, deleting, phraseIdx, phrases]);
+
+  return (
+    <div style={{ marginTop: 20, height: 32, display: "flex", alignItems: "center" }}>
+      <span style={{
+        fontSize: "1.1rem", fontWeight: 600, color: C.azure, fontStyle: "italic",
+        borderRight: `2px solid ${C.azure}`, paddingRight: 4,
+        animation: "blink 1s step-end infinite",
+      }}>
+        {phrases[phraseIdx].slice(0, charIdx)}
+      </span>
+      <style>{`@keyframes blink{0%,100%{border-color:${C.azure}}50%{border-color:transparent}}`}</style>
+    </div>
+  );
+}
+
+/* ───────── MYTH BUSTER ───────── */
+function MythBuster() {
+  const [flipped, setFlipped] = useState<number | null>(null);
+
+  const myths = [
+    {
+      myth: "La IA piensa como un humano",
+      reality: "La IA no piensa, siente ni tiene consciencia. Es una herramienta estadística que identifica patrones en datos. Los LLMs predicen la siguiente palabra más probable, no 'comprenden' como nosotros.",
+      icon: "🧠",
+      color: C.purple,
+    },
+    {
+      myth: "La IA siempre tiene razón",
+      reality: "Los modelos de IA pueden 'alucinar' (generar información falsa con confianza). Siempre se requiere validación humana, especialmente en decisiones de inversión y valoración de activos.",
+      icon: "🎯",
+      color: C.red,
+    },
+    {
+      myth: "Solo los programadores pueden usar IA",
+      reality: "Herramientas como ChatGPT, Claude y Copilot permiten a cualquier profesional aprovechar la IA sin escribir código. Lo importante es saber hacer las preguntas correctas (prompt engineering).",
+      icon: "💻",
+      color: C.azure,
+    },
+    {
+      myth: "La IA va a reemplazar todos los trabajos",
+      reality: "La IA transforma roles, no los elimina. McKinsey estima que la IA automatizará tareas específicas, pero creará nuevos roles. Los profesionales que sepan usar IA serán más productivos, no reemplazados.",
+      icon: "🤖",
+      color: C.orange,
+    },
+    {
+      myth: "Implementar IA es muy caro",
+      reality: "Hoy existen herramientas de IA accesibles desde $20/mes por usuario. El ROI en análisis de contratos, eficiencia energética y mantenimiento predictivo puede alcanzarse en 3-6 meses con pilotos de bajo costo.",
+      icon: "💰",
+      color: C.green,
+    },
+  ];
+
+  return (
+    <div style={{ margin: "36px 0" }}>
+      <h3 style={{ marginBottom: 8 }}>IA Myth Buster: mitos vs. realidad</h3>
+      <p style={{ color: C.t3, fontSize: ".82rem", marginBottom: 20 }}>Haz clic en cada mito para descubrir la realidad</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 14 }}>
+        {myths.map((m, i) => (
+          <div
+            key={i}
+            onClick={() => setFlipped(flipped === i ? null : i)}
+            style={{
+              cursor: "pointer", transition: ".4s", perspective: 800,
+              minHeight: flipped === i ? 260 : 180,
+            }}
+          >
+            <div style={{
+              background: flipped === i ? `${m.color}12` : C.dark2,
+              border: `2px solid ${flipped === i ? m.color : C.dark4}`,
+              borderRadius: 14, padding: 20, height: "100%",
+              transition: ".4s", position: "relative", overflow: "hidden",
+              transform: flipped === i ? "rotateY(0)" : "rotateY(0)",
+            }}>
+              {/* Top accent bar */}
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0, height: 3,
+                background: flipped === i ? m.color : "transparent",
+                transition: ".3s",
+              }} />
+              <div style={{ fontSize: "1.8rem", marginBottom: 10, textAlign: "center" }}>{m.icon}</div>
+              {flipped !== i ? (
+                <>
+                  <div style={{
+                    fontSize: ".82rem", fontWeight: 700, color: C.red, textAlign: "center",
+                    lineHeight: 1.4, marginBottom: 12,
+                  }}>
+                    &ldquo;{m.myth}&rdquo;
+                  </div>
+                  <div style={{
+                    fontSize: ".65rem", color: C.t3, textAlign: "center",
+                    textTransform: "uppercase", letterSpacing: 1,
+                  }}>Clic para ver realidad</div>
+                </>
+              ) : (
+                <>
+                  <div style={{
+                    fontSize: ".68rem", fontWeight: 700, color: C.red, textTransform: "uppercase",
+                    letterSpacing: 1, marginBottom: 6, textDecoration: "line-through", textAlign: "center",
+                  }}>Mito</div>
+                  <div style={{
+                    fontSize: ".78rem", color: C.t2, lineHeight: 1.6,
+                  }}>{m.reality}</div>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────── CALCULADORA DE IMPACTO IA ───────── */
+function CalculadoraImpactoIA() {
+  const [activos, setActivos] = useState(15);
+  const [gastoEnergia, setGastoEnergia] = useState(5000);
+  const [contratos, setContratos] = useState(50);
+
+  const ahorroEnergia = useMemo(() => ({
+    min: activos * gastoEnergia * 12 * 0.10,
+    max: activos * gastoEnergia * 12 * 0.20,
+  }), [activos, gastoEnergia]);
+
+  const ahorroContratos = useMemo(() => {
+    const horasPorContrato = 8;
+    const costoHora = 50;
+    const reduccion = 0.60;
+    return contratos * horasPorContrato * costoHora * reduccion;
+  }, [contratos]);
+
+  const ahorroMantenimiento = useMemo(() => {
+    const costoMantenimientoAnualPorActivo = 12000;
+    return activos * costoMantenimientoAnualPorActivo * 0.25;
+  }, [activos]);
+
+  const fmt = (n: number) => n >= 1000000
+    ? `$${(n / 1000000).toFixed(1)}M`
+    : n >= 1000
+      ? `$${(n / 1000).toFixed(0)}K`
+      : `$${n.toFixed(0)}`;
+
+  return (
+    <div style={{
+      margin: "36px 0", background: C.dark2, border: `1px solid ${C.dark4}`,
+      borderRadius: 16, padding: 32, overflow: "hidden", position: "relative",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 3,
+        background: `linear-gradient(90deg,${C.azure},${C.green},${C.purple})`,
+      }} />
+      <h3 style={{ marginBottom: 4 }}>Calculadora de Impacto IA en Real Estate</h3>
+      <p style={{ color: C.t3, fontSize: ".78rem", marginBottom: 28 }}>
+        Ajusta los valores para estimar el ahorro potencial con IA (basado en benchmarks verificados de la industria)
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 36 }}>
+        {/* Sliders */}
+        <div>
+          {/* Activos */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <label style={{ fontSize: ".82rem", fontWeight: 600, color: C.t1 }}>Activos en portafolio</label>
+              <span style={{ fontSize: ".82rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: C.azure }}>{activos}</span>
+            </div>
+            <input
+              type="range" min={1} max={100} value={activos}
+              onChange={(e) => setActivos(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.azure, cursor: "pointer" }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".65rem", color: C.t3 }}>
+              <span>1</span><span>100</span>
+            </div>
+          </div>
+
+          {/* Gasto energetico */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <label style={{ fontSize: ".82rem", fontWeight: 600, color: C.t1 }}>Gasto energetico mensual/activo (USD)</label>
+              <span style={{ fontSize: ".82rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: C.green }}>${gastoEnergia.toLocaleString()}</span>
+            </div>
+            <input
+              type="range" min={500} max={20000} step={500} value={gastoEnergia}
+              onChange={(e) => setGastoEnergia(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.green, cursor: "pointer" }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".65rem", color: C.t3 }}>
+              <span>$500</span><span>$20,000</span>
+            </div>
+          </div>
+
+          {/* Contratos */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <label style={{ fontSize: ".82rem", fontWeight: 600, color: C.t1 }}>Contratos de arrendamiento</label>
+              <span style={{ fontSize: ".82rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: C.purple }}>{contratos}</span>
+            </div>
+            <input
+              type="range" min={5} max={500} step={5} value={contratos}
+              onChange={(e) => setContratos(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.purple, cursor: "pointer" }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".65rem", color: C.t3 }}>
+              <span>5</span><span>500</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Results */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{
+            padding: 20, background: "rgba(52,211,153,.06)", border: "1px solid rgba(52,211,153,.2)",
+            borderRadius: 12,
+          }}>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: C.green, marginBottom: 6 }}>
+              Ahorro energetico anual (10-20%)
+            </div>
+            <div style={{ fontSize: "1.6rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.green }}>
+              {fmt(ahorroEnergia.min)} - {fmt(ahorroEnergia.max)}
+            </div>
+            <div style={{ fontSize: ".68rem", color: C.t3, marginTop: 4 }}>Benchmark: Honeywell, JLL, CBRE</div>
+          </div>
+
+          <div style={{
+            padding: 20, background: "rgba(167,139,250,.06)", border: "1px solid rgba(167,139,250,.2)",
+            borderRadius: 12,
+          }}>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: C.purple, marginBottom: 6 }}>
+              Ahorro en analisis de contratos (60% mas rapido)
+            </div>
+            <div style={{ fontSize: "1.6rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.purple }}>
+              {fmt(ahorroContratos)}
+            </div>
+            <div style={{ fontSize: ".68rem", color: C.t3, marginTop: 4 }}>Benchmark: JLL contract intelligence</div>
+          </div>
+
+          <div style={{
+            padding: 20, background: "rgba(0,169,224,.06)", border: "1px solid rgba(0,169,224,.2)",
+            borderRadius: 12,
+          }}>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: C.azure, marginBottom: 6 }}>
+              Ahorro en mantenimiento predictivo (~25%)
+            </div>
+            <div style={{ fontSize: "1.6rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.azure }}>
+              {fmt(ahorroMantenimiento)}
+            </div>
+            <div style={{ fontSize: ".68rem", color: C.t3, marginTop: 4 }}>Benchmark: Deloitte / McKinsey</div>
+          </div>
+
+          <div style={{
+            padding: 16, background: `linear-gradient(135deg,${C.azure}08,${C.green}08)`,
+            border: `1px solid ${C.azure}30`, borderRadius: 12, textAlign: "center",
+          }}>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: C.yellow, marginBottom: 6 }}>
+              Impacto total estimado anual
+            </div>
+            <div style={{
+              fontSize: "2rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+              background: `linear-gradient(135deg,${C.azure},${C.green})`,
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>
+              {fmt(ahorroEnergia.min + ahorroContratos + ahorroMantenimiento)} - {fmt(ahorroEnergia.max + ahorroContratos + ahorroMantenimiento)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════ */
@@ -618,6 +916,8 @@ export default function Home() {
             Comprendamos juntos los conceptos clave de la Inteligencia Artificial, Big Data y analítica avanzada, y su
             impacto directo en el negocio de Pactia.
           </p>
+
+          <TypingEffect />
 
           <div style={{ display: "flex", gap: 44, marginTop: 44, flexWrap: "wrap" }}>
             {[
@@ -760,6 +1060,8 @@ export default function Home() {
           </div>
         </div>
 
+        <MythBuster />
+
         <Quiz
           question="¿Cuál de estas afirmaciones sobre la IA es correcta?"
           options={[
@@ -819,7 +1121,7 @@ export default function Home() {
               v: "Veracidad", icon: "✅", color: C.orange,
               what: "La confiabilidad y precisión de los datos",
               pactia: "Un sensor de temperatura descalibrado, un contrato mal digitalizado, un dato de mercado desactualizado — un solo dato erróneo puede llevar a decisiones de inversión equivocadas. La veracidad es crítica en un fondo de inversión inmobiliaria de esta escala.",
-              number: "IBM estima que datos de mala calidad cuestan $3.1 trillones anuales solo en EE.UU."
+              number: "IBM estima que datos de mala calidad cuestan USD $3.1 trillion (millones de millones) anuales solo en EE.UU."
             },
             {
               v: "Valor", icon: "💎", color: C.yellow,
@@ -1077,7 +1379,7 @@ export default function Home() {
                 <div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 28 }}>
                     <Counter value="80%" label="Tiempo en limpiar datos" sub="En un proyecto típico de IA" color={C.red} />
-                    <Counter value="$3.1T" label="Costo de mala calidad" sub="Anual en EE.UU. (IBM)" color={C.orange} />
+                    <Counter value="$3.1T" label="Costo mala calidad datos" sub="USD trillion anual EE.UU. (IBM)" color={C.orange} />
                     <Counter value="1 de 3" label="Registros con errores" sub="Promedio empresarial" color={C.yellow} />
                     <Counter value="68%" label="Datos no aprovechados" sub="Promedio empresarial (Seagate/IDC)" color={C.purple} />
                   </div>
@@ -1425,6 +1727,8 @@ export default function Home() {
         <Bar label="Analítica de inquilinos" pct={55} color={C.orange} delay={600} />
         <Bar label="Decisión de inversión con IA" pct={45} color={C.yellow} delay={800} />
 
+        <CalculadoraImpactoIA />
+
         <div style={{
           marginTop: 36, padding: 28, background: `linear-gradient(135deg,${C.dark2},${C.dark3})`,
           border: `1px solid ${C.dark4}`, borderRadius: 14,
@@ -1432,7 +1736,7 @@ export default function Home() {
           <h3 style={{ color: C.green }}>Dato clave: Colombia es líder en construcción verde</h3>
           <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
             Colombia ocupa el <strong style={{ color: C.t1 }}>2do lugar mundial en m2 certificados EDGE</strong> (22.2 millones de m2).
-            Con 490+ proyectos LEED registrados, reduciendo <strong style={{ color: C.t1 }}>190,277 toneladas de CO2 anuales</strong>.
+            Con 490+ proyectos LEED registrados y una contribucion significativa a la reduccion de emisiones de CO2 en el sector construccion.
             La Resolución 0194 de 2025 establece parámetros más ambiciosos &mdash; la IA será clave para cumplirlos eficientemente.
           </p>
         </div>
@@ -1463,7 +1767,7 @@ export default function Home() {
           <CaseCard
             company="Prologis"
             title="Logística inteligente con IA + IoT"
-            desc="El mayor REIT de logística del mundo logra 20% de reducción energética con IA+IoT en bodegas. 30% de espacios logísticos ahora automatizados. Plan de $8B para 20+ data centers."
+            desc="El mayor REIT de logística del mundo reporta hasta 20% de reducción energética con IA+IoT en sus instalaciones. 30% de espacios logísticos ahora automatizados. Plan de $8B para 20+ data centers."
             metrics={[
               { value: "20%", label: "Menos energía", color: C.green },
               { value: "30%", label: "Espacios automatizados", color: C.purple },
@@ -1614,8 +1918,8 @@ export default function Home() {
                 }}>
                   <h3 style={{ color: C.green }}>Edificios verdes generan mayor rentabilidad</h3>
                   <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.7 }}>
-                    Los edificios con certificación verde obtienen <strong style={{ color: C.t1 }}>12-28% de prima en arriendos</strong> en los principales mercados.
-                    Los green leases reducen consumo de oficinas en <strong style={{ color: C.t1 }}>11-22%</strong>.
+                    Estudios de CBRE y JLL indican que edificios con certificación verde pueden obtener <strong style={{ color: C.t1 }}>primas de 7-25% en arriendos</strong> en los principales mercados.
+                    Los green leases pueden reducir consumo de oficinas entre <strong style={{ color: C.t1 }}>10-20%</strong> segun datos de la industria.
                     La sostenibilidad ya no es compliance &mdash; es un <strong style={{ color: C.green }}>driver de valoración</strong>.
                   </p>
                 </div>
@@ -2175,6 +2479,57 @@ export default function Home() {
           </div>
         </div>
       </Section>
+
+      {/* CTA - Diagnostico IA */}
+      <div style={{
+        padding: "60px 56px", display: "flex", justifyContent: "center",
+      }}>
+        <div style={{
+          maxWidth: 700, width: "100%", padding: 3,
+          borderRadius: 20,
+          background: `linear-gradient(135deg,${C.azure},${C.purple},${C.green},${C.azure})`,
+          backgroundSize: "300% 300%",
+          animation: "gradientShift 6s ease infinite",
+        }}>
+          <style>{`@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}`}</style>
+          <div style={{
+            background: C.dark2, borderRadius: 18, padding: "40px 36px", textAlign: "center",
+          }}>
+            <div style={{ fontSize: "2rem", marginBottom: 14 }}>🤖</div>
+            <h3 style={{
+              fontSize: "1.3rem", fontWeight: 800, lineHeight: 1.3, marginBottom: 12,
+              background: `linear-gradient(135deg,#fff,${C.azureLight})`,
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>
+              ¿Quieres descubrir que herramienta de IA necesitas?
+            </h3>
+            <p style={{ color: C.t2, fontSize: ".9rem", lineHeight: 1.6, marginBottom: 24, maxWidth: 500, margin: "0 auto 24px" }}>
+              Realiza nuestro <strong style={{ color: C.azure }}>diagnostico interactivo gratuito</strong> y
+              recibe una recomendacion personalizada de herramientas de IA segun tu perfil, rol y necesidades.
+            </p>
+            <a
+              href="https://que-ia-necesito.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 10,
+                padding: "14px 32px",
+                background: `linear-gradient(135deg,${C.azure},${C.zafre})`,
+                color: "#fff", textDecoration: "none",
+                borderRadius: 14, fontSize: ".9rem", fontWeight: 700,
+                letterSpacing: ".5px", transition: ".3s",
+                boxShadow: `0 4px 24px rgba(0,169,224,.3)`,
+              }}
+            >
+              Iniciar diagnostico
+              <span style={{ fontSize: "1.1rem" }}>→</span>
+            </a>
+            <p style={{ color: C.t3, fontSize: ".72rem", marginTop: 14 }}>
+              Toma menos de 3 minutos &bull; 100% gratuito &bull; Resultados inmediatos
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Scroll to top */}
       <button
