@@ -874,15 +874,15 @@ function BeforeVsAfterRace() {
     "Leyendo contrato... pagina 12 de 50",
     "Leyendo contrato... pagina 28 de 50",
     "Leyendo contrato... pagina 43 de 50",
-    "Buscando clausulas de terminacion...",
+    "Buscando cláusulas de terminación...",
     "Revisando fechas de vigencia...",
     "Calculando montos y garantias...",
     "Verificando partes involucradas...",
     "Cruzando con normativa vigente...",
-    "Revisando clausulas de penalidad...",
+    "Revisando cláusulas de penalidad...",
     "Redactando resumen ejecutivo...",
     "Verificando cifras manualmente...",
-    "Analisis completo",
+    "Análisis completo",
   ];
 
   const aiResults = [
@@ -949,7 +949,7 @@ function BeforeVsAfterRace() {
     <div style={{ margin: "36px 0" }}>
       <h3 style={{ marginBottom: 4 }}>Carrera: Sin IA vs Con IA</h3>
       <p style={{ color: C.t3, fontSize: ".82rem", marginBottom: 20 }}>
-        Compara cuanto tarda un analista humano vs. la IA en analizar un contrato de arrendamiento de 50 paginas.
+        Compara cuánto tarda un analista humano vs. la IA en analizar un contrato de arrendamiento de 50 páginas.
       </p>
 
       <div style={{
@@ -960,7 +960,7 @@ function BeforeVsAfterRace() {
           padding: "16px 24px", background: C.dark3, display: "flex", justifyContent: "space-between",
           alignItems: "center", borderBottom: `1px solid ${C.dark4}`,
         }}>
-          <span style={{ fontSize: ".82rem", fontWeight: 700, color: C.t1 }}>Analisis de contrato de arrendamiento (50 paginas)</span>
+          <span style={{ fontSize: ".82rem", fontWeight: 700, color: C.t1 }}>Analisis de contrato de arrendamiento (50 páginas)</span>
           <button onClick={state === "idle" ? startRace : reset} style={{
             padding: "10px 28px", background: state === "idle" ? C.azure : C.dark4,
             border: "none", borderRadius: 10, color: state === "idle" ? C.dark : C.t2,
@@ -1064,7 +1064,7 @@ function BeforeVsAfterRace() {
                   borderRadius: 8, textAlign: "center",
                   fontSize: ".72rem", fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 1,
                 }}>
-                  Analisis completo
+                  Análisis completo
                 </div>
               </div>
             )}
@@ -1108,7 +1108,7 @@ function BeforeVsAfterRace() {
 
 /* ───────── DOCUMENT ANALYZER DEMO ───────── */
 function DocumentAnalyzerDemo() {
-  const defaultText = `CONTRATO DE ARRENDAMIENTO COMERCIAL celebrado entre PACTIA S.A.S., identificada con NIT 900.123.456-7, representada por Maria Fernanda Lopez Gutierrez, en calidad de ARRENDADOR, y GRUPO RETAIL COLOMBIA S.A., identificada con NIT 800.987.654-3, representada por Carlos Andres Martinez Ruiz, en calidad de ARRENDATARIO, sobre el local comercial No. 245 ubicado en el Centro Comercial Viva Envigado, con un area de 187.5 m2, por un canon mensual de $42,350,000 COP (cuarenta y dos millones trescientos cincuenta mil pesos), con incremento anual del IPC + 2 puntos porcentuales, por un periodo de vigencia comprendido entre el 1 de marzo de 2025 y el 28 de febrero de 2030. El deposito de garantia corresponde a 3 meses de canon equivalente a $127,050,000 COP. En caso de terminacion anticipada, el arrendatario debera pagar una penalidad equivalente al 30% del canon restante del contrato.`;
+  const defaultText = `CONTRATO DE ARRENDAMIENTO COMERCIAL celebrado entre PACTIA S.A.S., identificada con NIT 900.123.456-7, representada por María Fernanda López Gutiérrez, en calidad de ARRENDADOR, y GRUPO RETAIL COLOMBIA S.A., identificada con NIT 800.987.654-3, representada por Carlos Andrés Martínez Ruiz, en calidad de ARRENDATARIO, sobre el local comercial No. 245 ubicado en el Centro Comercial Viva Envigado, con un área de 187.5 m2, por un canon mensual de $42,350,000 COP (cuarenta y dos millones trescientos cincuenta mil pesos), con incremento anual del IPC + 2 puntos porcentuales, por un período de vigencia comprendido entre el 1 de marzo de 2025 y el 28 de febrero de 2030. El depósito de garantía corresponde a 3 meses de canon equivalente a $127,050,000 COP. En caso de terminación anticipada, el arrendatario deberá pagar una penalidad equivalente al 30% del canon restante del contrato.`;
 
   const [text, setText] = useState(defaultText);
   const [analysisState, setAnalysisState] = useState<"idle" | "analyzing" | "done">("idle");
@@ -1118,7 +1118,7 @@ function DocumentAnalyzerDemo() {
   const analysisSteps = [
     { label: "Tokenizando texto...", duration: 500 },
     { label: "Identificando entidades...", duration: 800 },
-    { label: "Extrayendo informacion clave...", duration: 600 },
+    { label: "Extrayendo información clave...", duration: 600 },
     { label: "Generando resumen ejecutivo...", duration: 1000 },
   ];
 
@@ -1271,7 +1271,7 @@ function DocumentAnalyzerDemo() {
               letterSpacing: 2, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
             }}>
               <span style={{ width: 8, height: 8, background: C.green, borderRadius: "50%" }} />
-              Analisis completo
+              Análisis completo
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -1368,8 +1368,8 @@ function DocumentAnalyzerDemo() {
                   Resumen ejecutivo
                 </div>
                 <p style={{ fontSize: ".82rem", color: C.t2, lineHeight: 1.7 }}>
-                  Contrato de arrendamiento comercial a 5 anos con canon mensual significativo e incremento IPC+2pp.
-                  Incluye deposito de garantia de 3 meses y clausula de penalidad por terminacion anticipada del 30%
+                  Contrato de arrendamiento comercial a 5 años con canon mensual significativo e incremento IPC+2pp.
+                  Incluye depósito de garantía de 3 meses y cláusula de penalidad por terminación anticipada del 30%
                   del canon restante, lo cual representa un riesgo financiero relevante para el arrendatario.
                 </p>
               </div>
@@ -1383,9 +1383,9 @@ function DocumentAnalyzerDemo() {
                   Riesgos identificados
                 </div>
                 <ul style={{ color: C.t2, fontSize: ".8rem", lineHeight: 1.8, paddingLeft: 16 }}>
-                  <li><strong style={{ color: C.red }}>Penalidad elevada:</strong> 30% del canon restante puede ser significativo en caso de terminacion anticipada</li>
-                  <li><strong style={{ color: C.orange }}>Incremento IPC+2:</strong> En escenarios de alta inflacion, el canon podria crecer por encima del mercado</li>
-                  <li><strong style={{ color: C.yellow }}>Plazo largo:</strong> 5 anos sin clausula de revision de condiciones de mercado</li>
+                  <li><strong style={{ color: C.red }}>Penalidad elevada:</strong> 30% del canon restante puede ser significativo en caso de terminación anticipada</li>
+                  <li><strong style={{ color: C.orange }}>Incremento IPC+2:</strong> En escenarios de alta inflación, el canon podría crecer por encima del mercado</li>
+                  <li><strong style={{ color: C.yellow }}>Plazo largo:</strong> 5 años sin cláusula de revisión de condiciones de mercado</li>
                 </ul>
               </div>
             </div>
@@ -1395,13 +1395,13 @@ function DocumentAnalyzerDemo() {
               marginTop: 16, padding: "14px 20px", background: C.dark3, borderRadius: 10,
               display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
             }}>
-              <span style={{ fontSize: ".72rem", color: C.t3, fontWeight: 600, marginRight: 8 }}>Clasificacion:</span>
+              <span style={{ fontSize: ".72rem", color: C.t3, fontWeight: 600, marginRight: 8 }}>Clasificación:</span>
               {[
                 { label: "Contrato de arrendamiento", color: C.azure },
                 { label: "Comercial", color: C.purple },
                 { label: "Vigente", color: C.green },
                 { label: "Riesgo: Medio", color: C.orange },
-                { label: "5 anos", color: C.t2 },
+                { label: "5 años", color: C.t2 },
               ].map((tag, i) => (
                 <span key={i} style={{
                   padding: "5px 12px", background: `${tag.color}15`, border: `1px solid ${tag.color}30`,
@@ -1504,10 +1504,10 @@ function AudiencePollSimulator() {
               Encuesta en vivo
             </div>
             <h3 style={{ marginBottom: 4, fontSize: "1.15rem" }}>
-              ¿Que porcentaje de su trabajo diario cree que podria optimizarse con IA?
+              ¿Qué porcentaje de su trabajo diario cree que podría optimizarse con IA?
             </h3>
             <p style={{ color: C.t3, fontSize: ".78rem" }}>
-              Seleccione una opcion para ver los resultados de la audiencia
+              Seleccione una opción para ver los resultados de la audiencia
             </p>
           </div>
           {voted && (
