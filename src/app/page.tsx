@@ -858,6 +858,785 @@ function CalculadoraImpactoIA() {
   );
 }
 
+/* ───────── BEFORE VS AFTER RACE ───────── */
+function BeforeVsAfterRace() {
+  const [state, setState] = useState<"idle" | "running" | "done">("idle");
+  const [humanStep, setHumanStep] = useState(0);
+  const [humanTime, setHumanTime] = useState(0);
+  const [aiDone, setAiDone] = useState(false);
+  const [aiTime, setAiTime] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stepRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const humanSteps = [
+    "Abriendo contrato PDF... (50 pags)",
+    "Leyendo contrato... pagina 1 de 50",
+    "Leyendo contrato... pagina 12 de 50",
+    "Leyendo contrato... pagina 28 de 50",
+    "Leyendo contrato... pagina 43 de 50",
+    "Buscando clausulas de terminacion...",
+    "Revisando fechas de vigencia...",
+    "Calculando montos y garantias...",
+    "Verificando partes involucradas...",
+    "Cruzando con normativa vigente...",
+    "Revisando clausulas de penalidad...",
+    "Redactando resumen ejecutivo...",
+    "Verificando cifras manualmente...",
+    "Analisis completo",
+  ];
+
+  const aiResults = [
+    "Partes: Pactia S.A.S vs Arrendatario Corp",
+    "Vigencia: 01/03/2025 - 28/02/2030",
+    "Canon: $45,200,000 COP/mes + IPC",
+    "Garantia: $135,600,000 COP",
+    "Clausulas de riesgo: 3 detectadas",
+    "Resumen ejecutivo: generado",
+  ];
+
+  const startRace = useCallback(() => {
+    setState("running");
+    setHumanStep(0);
+    setHumanTime(0);
+    setAiDone(false);
+    setAiTime(0);
+
+    // Human timer: counts up every 100ms
+    let hTime = 0;
+    timerRef.current = setInterval(() => {
+      hTime += 0.1;
+      setHumanTime(parseFloat(hTime.toFixed(1)));
+    }, 100);
+
+    // Human steps: appear one by one
+    let step = 0;
+    stepRef.current = setInterval(() => {
+      step++;
+      if (step < humanSteps.length) {
+        setHumanStep(step);
+      } else {
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (stepRef.current) clearInterval(stepRef.current);
+        setState("done");
+      }
+    }, 3200);
+
+    // AI: waits 2s then shows result
+    setTimeout(() => {
+      setAiDone(true);
+      setAiTime(2.8);
+    }, 2800);
+  }, [humanSteps.length]);
+
+  const reset = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (stepRef.current) clearInterval(stepRef.current);
+    setState("idle");
+    setHumanStep(0);
+    setHumanTime(0);
+    setAiDone(false);
+    setAiTime(0);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (stepRef.current) clearInterval(stepRef.current);
+    };
+  }, []);
+
+  return (
+    <div style={{ margin: "36px 0" }}>
+      <h3 style={{ marginBottom: 4 }}>Carrera: Sin IA vs Con IA</h3>
+      <p style={{ color: C.t3, fontSize: ".82rem", marginBottom: 20 }}>
+        Compara cuanto tarda un analista humano vs. la IA en analizar un contrato de arrendamiento de 50 paginas.
+      </p>
+
+      <div style={{
+        background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 16, overflow: "hidden",
+      }}>
+        {/* Header with start button */}
+        <div style={{
+          padding: "16px 24px", background: C.dark3, display: "flex", justifyContent: "space-between",
+          alignItems: "center", borderBottom: `1px solid ${C.dark4}`,
+        }}>
+          <span style={{ fontSize: ".82rem", fontWeight: 700, color: C.t1 }}>Analisis de contrato de arrendamiento (50 paginas)</span>
+          <button onClick={state === "idle" ? startRace : reset} style={{
+            padding: "10px 28px", background: state === "idle" ? C.azure : C.dark4,
+            border: "none", borderRadius: 10, color: state === "idle" ? C.dark : C.t2,
+            fontWeight: 800, fontSize: ".85rem", cursor: "pointer", transition: ".3s",
+            fontFamily: "'Inter',sans-serif", letterSpacing: 1,
+            boxShadow: state === "idle" ? `0 0 20px ${C.azure}40` : "none",
+          }}>
+            {state === "idle" ? "START" : state === "running" ? "REINICIAR" : "REINICIAR"}
+          </button>
+        </div>
+
+        {/* Race tracks */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 380 }}>
+          {/* Human side */}
+          <div style={{
+            padding: 24, borderRight: `1px solid ${C.dark4}`,
+            background: state === "done" ? "rgba(248,113,113,.03)" : "transparent",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.red, textTransform: "uppercase", letterSpacing: 2 }}>
+                Sin IA (manual)
+              </div>
+              <div style={{
+                fontSize: "1.6rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                color: state === "running" ? C.red : C.t3,
+              }}>
+                {humanTime.toFixed(1)}s
+              </div>
+            </div>
+            {/* Progress bar */}
+            <div style={{ height: 6, background: C.dark4, borderRadius: 3, marginBottom: 16, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", borderRadius: 3, background: C.red, transition: "width .5s",
+                width: `${(humanStep / (humanSteps.length - 1)) * 100}%`,
+              }} />
+            </div>
+            {/* Steps */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {humanSteps.slice(0, humanStep + 1).map((step, i) => (
+                <div key={i} style={{
+                  padding: "8px 12px", background: i === humanStep && state === "running" ? "rgba(248,113,113,.08)" : C.dark3,
+                  borderRadius: 8, fontSize: ".75rem", color: i === humanStep && state === "running" ? C.red : C.t3,
+                  fontFamily: "'JetBrains Mono',monospace", transition: ".3s",
+                  borderLeft: i === humanStep && state === "running" ? `3px solid ${C.red}` : "3px solid transparent",
+                  opacity: state === "idle" ? 0.3 : 1,
+                }}>
+                  {i === humanStep && state === "running" && <span style={{ animation: "pl 1s infinite", marginRight: 6 }}>...</span>}
+                  {step}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI side */}
+          <div style={{
+            padding: 24,
+            background: aiDone ? "rgba(52,211,153,.03)" : "transparent",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 2 }}>
+                Con IA
+              </div>
+              <div style={{
+                fontSize: "1.6rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                color: aiDone ? C.green : C.t3,
+              }}>
+                {aiDone ? `${aiTime.toFixed(1)}s` : state === "running" ? "Procesando..." : "0.0s"}
+              </div>
+            </div>
+            {/* Progress bar */}
+            <div style={{ height: 6, background: C.dark4, borderRadius: 3, marginBottom: 16, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", borderRadius: 3, transition: "width .4s",
+                background: `linear-gradient(90deg,${C.green},${C.azure})`,
+                width: aiDone ? "100%" : state === "running" ? "15%" : "0%",
+              }} />
+            </div>
+            {/* Results */}
+            {state === "running" && !aiDone && (
+              <div style={{
+                padding: 20, textAlign: "center", color: C.t3, fontSize: ".82rem",
+              }}>
+                <div style={{ fontSize: "2rem", marginBottom: 8, animation: "pl 1.5s infinite" }}>...</div>
+                Tokenizando y analizando documento...
+              </div>
+            )}
+            {aiDone && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {aiResults.map((result, i) => (
+                  <div key={i} style={{
+                    padding: "10px 14px", background: "rgba(52,211,153,.06)",
+                    border: "1px solid rgba(52,211,153,.15)", borderRadius: 8,
+                    fontSize: ".78rem", color: C.green, fontFamily: "'JetBrains Mono',monospace",
+                    animation: `fadeSlide .3s ease ${i * 0.08}s both`,
+                  }}>
+                    {result}
+                  </div>
+                ))}
+                <div style={{
+                  marginTop: 8, padding: 12, background: "rgba(52,211,153,.1)",
+                  borderRadius: 8, textAlign: "center",
+                  fontSize: ".72rem", fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 1,
+                }}>
+                  Analisis completo
+                </div>
+              </div>
+            )}
+            {state === "idle" && (
+              <div style={{ padding: 20, textAlign: "center", color: C.t3, fontSize: ".82rem" }}>
+                Presiona START para comenzar la carrera
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer comparison */}
+        {state === "done" && (
+          <div style={{
+            padding: "20px 24px", background: `linear-gradient(135deg,rgba(52,211,153,.06),rgba(0,169,224,.06))`,
+            borderTop: `1px solid ${C.dark4}`, display: "flex", justifyContent: "center",
+            alignItems: "center", gap: 20,
+          }}>
+            <span style={{ fontSize: "1.3rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.red }}>
+              {humanTime.toFixed(1)}s
+            </span>
+            <span style={{ fontSize: ".82rem", color: C.t3, fontWeight: 700 }}>vs</span>
+            <span style={{ fontSize: "1.3rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.green }}>
+              {aiTime.toFixed(1)}s
+            </span>
+            <span style={{ fontSize: ".72rem", color: C.t3 }}>&mdash;</span>
+            <span style={{
+              fontSize: "1.1rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+              background: `linear-gradient(135deg,${C.azure},${C.green})`,
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>
+              {Math.round(humanTime / aiTime)}x mas rapido
+            </span>
+          </div>
+        )}
+      </div>
+      <style>{`@keyframes fadeSlide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}`}</style>
+    </div>
+  );
+}
+
+/* ───────── DOCUMENT ANALYZER DEMO ───────── */
+function DocumentAnalyzerDemo() {
+  const defaultText = `CONTRATO DE ARRENDAMIENTO COMERCIAL celebrado entre PACTIA S.A.S., identificada con NIT 900.123.456-7, representada por Maria Fernanda Lopez Gutierrez, en calidad de ARRENDADOR, y GRUPO RETAIL COLOMBIA S.A., identificada con NIT 800.987.654-3, representada por Carlos Andres Martinez Ruiz, en calidad de ARRENDATARIO, sobre el local comercial No. 245 ubicado en el Centro Comercial Viva Envigado, con un area de 187.5 m2, por un canon mensual de $42,350,000 COP (cuarenta y dos millones trescientos cincuenta mil pesos), con incremento anual del IPC + 2 puntos porcentuales, por un periodo de vigencia comprendido entre el 1 de marzo de 2025 y el 28 de febrero de 2030. El deposito de garantia corresponde a 3 meses de canon equivalente a $127,050,000 COP. En caso de terminacion anticipada, el arrendatario debera pagar una penalidad equivalente al 30% del canon restante del contrato.`;
+
+  const [text, setText] = useState(defaultText);
+  const [analysisState, setAnalysisState] = useState<"idle" | "analyzing" | "done">("idle");
+  const [currentStep, setCurrentStep] = useState(0);
+  const [stepProgress, setStepProgress] = useState(0);
+
+  const analysisSteps = [
+    { label: "Tokenizando texto...", duration: 500 },
+    { label: "Identificando entidades...", duration: 800 },
+    { label: "Extrayendo informacion clave...", duration: 600 },
+    { label: "Generando resumen ejecutivo...", duration: 1000 },
+  ];
+
+  const extractEntities = useCallback((input: string) => {
+    const dates: string[] = [];
+    const amounts: string[] = [];
+    const names: string[] = [];
+    const percentages: string[] = [];
+
+    // Dates
+    const datePatterns = input.match(/\d{1,2}\s+de\s+\w+\s+de\s+\d{4}/gi);
+    if (datePatterns) dates.push(...datePatterns);
+
+    // Amounts with $
+    const amountPatterns = input.match(/\$[\d.,]+(?:\s*(?:COP|USD|pesos))?/gi);
+    if (amountPatterns) amounts.push(...amountPatterns);
+
+    // Percentages
+    const pctPatterns = input.match(/\d+(?:[.,]\d+)?%/g);
+    if (pctPatterns) percentages.push(...pctPatterns);
+    const pctWord = input.match(/IPC\s*\+\s*\d+\s*puntos/gi);
+    if (pctWord) percentages.push(...pctWord);
+
+    // Names (sequences of 2+ capitalized words, excluding common Spanish words)
+    const namePatterns = input.match(/[A-Z][a-zéáíóúñ]+(?:\s+[A-Z][a-zéáíóúñ]+){1,4}/g);
+    if (namePatterns) {
+      const excluded = ["En", "El", "La", "Los", "Las", "De", "Del", "Por", "Con", "Sin", "Sobre"];
+      namePatterns.forEach(n => {
+        if (!excluded.some(e => n.startsWith(e + " ")) && n.length > 6) {
+          names.push(n);
+        }
+      });
+    }
+
+    // Also get NIT numbers
+    const nits = input.match(/NIT\s+[\d.-]+/gi);
+
+    return { dates, amounts, names: [...new Set(names)], percentages, nits: nits || [] };
+  }, []);
+
+  const startAnalysis = useCallback(() => {
+    setAnalysisState("analyzing");
+    setCurrentStep(0);
+    setStepProgress(0);
+
+    let step = 0;
+    const runStep = () => {
+      if (step >= analysisSteps.length) {
+        setAnalysisState("done");
+        return;
+      }
+      setCurrentStep(step);
+      setStepProgress(0);
+      const dur = analysisSteps[step].duration;
+      let prog = 0;
+      const interval = setInterval(() => {
+        prog += 5;
+        setStepProgress(Math.min(prog, 100));
+        if (prog >= 100) {
+          clearInterval(interval);
+          step++;
+          setTimeout(runStep, 100);
+        }
+      }, dur / 20);
+    };
+    runStep();
+  }, [analysisSteps]);
+
+  const entities = useMemo(() => extractEntities(text), [text, extractEntities]);
+
+  return (
+    <div style={{ margin: "36px 0" }}>
+      <h3 style={{ marginBottom: 4 }}>Analizador de Documentos con IA</h3>
+      <p style={{ color: C.t3, fontSize: ".82rem", marginBottom: 20 }}>
+        Simula como un LLM analiza un contrato de arrendamiento: extrae entidades, cifras, riesgos y genera un resumen.
+      </p>
+
+      <div style={{
+        background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 16, overflow: "hidden",
+      }}>
+        {/* Input area */}
+        <div style={{ padding: 24 }}>
+          <div style={{
+            fontSize: ".72rem", fontWeight: 700, color: C.t3, textTransform: "uppercase",
+            letterSpacing: 2, marginBottom: 10,
+          }}>
+            Documento de entrada
+          </div>
+          <textarea
+            value={text}
+            onChange={(e) => { setText(e.target.value); setAnalysisState("idle"); }}
+            style={{
+              width: "100%", minHeight: 140, padding: "16px 18px", background: C.dark3,
+              border: `1px solid ${C.dark4}`, borderRadius: 10, color: C.t1,
+              fontFamily: "'Inter',sans-serif", fontSize: ".84rem", lineHeight: 1.7,
+              outline: "none", resize: "vertical",
+            }}
+          />
+          <button onClick={startAnalysis} disabled={analysisState === "analyzing"} style={{
+            marginTop: 14, padding: "14px 36px",
+            background: analysisState === "analyzing" ? C.dark4 : `linear-gradient(135deg,${C.azure},${C.purple})`,
+            border: "none", borderRadius: 12, color: "#fff", fontWeight: 800, fontSize: ".9rem",
+            cursor: analysisState === "analyzing" ? "not-allowed" : "pointer",
+            fontFamily: "'Inter',sans-serif", transition: ".3s", letterSpacing: 1,
+            boxShadow: analysisState !== "analyzing" ? `0 4px 20px ${C.azure}30` : "none",
+          }}>
+            {analysisState === "analyzing" ? "Analizando..." : "Analizar con IA"}
+          </button>
+        </div>
+
+        {/* Analysis steps */}
+        {analysisState === "analyzing" && (
+          <div style={{ padding: "0 24px 24px" }}>
+            {analysisSteps.map((step, i) => (
+              <div key={i} style={{
+                padding: "10px 0", opacity: i <= currentStep ? 1 : 0.3, transition: ".3s",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <span style={{
+                    fontSize: ".78rem", fontWeight: 600, color: i < currentStep ? C.green : i === currentStep ? C.azure : C.t3,
+                    fontFamily: "'JetBrains Mono',monospace",
+                  }}>
+                    {i < currentStep ? "\u2713 " : ""}{step.label}
+                  </span>
+                  {i === currentStep && (
+                    <span style={{ fontSize: ".72rem", color: C.azure, fontFamily: "'JetBrains Mono',monospace" }}>
+                      {stepProgress}%
+                    </span>
+                  )}
+                </div>
+                {i === currentStep && (
+                  <div style={{ height: 4, background: C.dark4, borderRadius: 2, overflow: "hidden" }}>
+                    <div style={{
+                      height: "100%", borderRadius: 2, transition: "width .1s",
+                      background: `linear-gradient(90deg,${C.azure},${C.purple})`,
+                      width: `${stepProgress}%`,
+                    }} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Results dashboard */}
+        {analysisState === "done" && (
+          <div style={{ padding: "0 24px 24px" }}>
+            <div style={{
+              fontSize: ".72rem", fontWeight: 700, color: C.green, textTransform: "uppercase",
+              letterSpacing: 2, marginBottom: 16, display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{ width: 8, height: 8, background: C.green, borderRadius: "50%" }} />
+              Analisis completo
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Entities */}
+              <div style={{
+                padding: 20, background: "rgba(0,169,224,.04)", border: "1px solid rgba(0,169,224,.15)",
+                borderRadius: 12,
+              }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.azure, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+                  Entidades detectadas
+                </div>
+                {entities.names.length > 0 && (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: ".68rem", color: C.t3, marginBottom: 4 }}>Personas / Empresas:</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {entities.names.slice(0, 6).map((n, i) => (
+                        <span key={i} style={{
+                          padding: "4px 10px", background: "rgba(0,169,224,.1)", border: "1px solid rgba(0,169,224,.25)",
+                          borderRadius: 6, fontSize: ".72rem", color: C.azure, fontWeight: 600,
+                        }}>{n}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {entities.dates.length > 0 && (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: ".68rem", color: C.t3, marginBottom: 4 }}>Fechas:</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {entities.dates.map((d, i) => (
+                        <span key={i} style={{
+                          padding: "4px 10px", background: "rgba(167,139,250,.1)", border: "1px solid rgba(167,139,250,.25)",
+                          borderRadius: 6, fontSize: ".72rem", color: C.purple, fontWeight: 600,
+                          fontFamily: "'JetBrains Mono',monospace",
+                        }}>{d}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {entities.nits.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: ".68rem", color: C.t3, marginBottom: 4 }}>Identificaciones:</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {entities.nits.map((n, i) => (
+                        <span key={i} style={{
+                          padding: "4px 10px", background: "rgba(251,191,36,.1)", border: "1px solid rgba(251,191,36,.25)",
+                          borderRadius: 6, fontSize: ".72rem", color: C.yellow, fontWeight: 600,
+                          fontFamily: "'JetBrains Mono',monospace",
+                        }}>{n}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Key figures */}
+              <div style={{
+                padding: 20, background: "rgba(52,211,153,.04)", border: "1px solid rgba(52,211,153,.15)",
+                borderRadius: 12,
+              }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+                  Cifras clave
+                </div>
+                {entities.amounts.map((a, i) => (
+                  <div key={i} style={{
+                    padding: "8px 12px", background: "rgba(52,211,153,.06)", borderRadius: 8,
+                    marginBottom: 6, fontSize: ".82rem", fontWeight: 700, color: C.green,
+                    fontFamily: "'JetBrains Mono',monospace",
+                  }}>
+                    {a}
+                  </div>
+                ))}
+                {entities.percentages.length > 0 && (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ fontSize: ".68rem", color: C.t3, marginBottom: 4 }}>Porcentajes / Incrementos:</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                      {entities.percentages.map((p, i) => (
+                        <span key={i} style={{
+                          padding: "4px 10px", background: "rgba(251,146,60,.1)", border: "1px solid rgba(251,146,60,.25)",
+                          borderRadius: 6, fontSize: ".72rem", color: C.orange, fontWeight: 600,
+                          fontFamily: "'JetBrains Mono',monospace",
+                        }}>{p}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Executive summary */}
+              <div style={{
+                padding: 20, background: "rgba(167,139,250,.04)", border: "1px solid rgba(167,139,250,.15)",
+                borderRadius: 12,
+              }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.purple, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+                  Resumen ejecutivo
+                </div>
+                <p style={{ fontSize: ".82rem", color: C.t2, lineHeight: 1.7 }}>
+                  Contrato de arrendamiento comercial a 5 anos con canon mensual significativo e incremento IPC+2pp.
+                  Incluye deposito de garantia de 3 meses y clausula de penalidad por terminacion anticipada del 30%
+                  del canon restante, lo cual representa un riesgo financiero relevante para el arrendatario.
+                </p>
+              </div>
+
+              {/* Risks */}
+              <div style={{
+                padding: 20, background: "rgba(248,113,113,.04)", border: "1px solid rgba(248,113,113,.15)",
+                borderRadius: 12,
+              }}>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.red, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>
+                  Riesgos identificados
+                </div>
+                <ul style={{ color: C.t2, fontSize: ".8rem", lineHeight: 1.8, paddingLeft: 16 }}>
+                  <li><strong style={{ color: C.red }}>Penalidad elevada:</strong> 30% del canon restante puede ser significativo en caso de terminacion anticipada</li>
+                  <li><strong style={{ color: C.orange }}>Incremento IPC+2:</strong> En escenarios de alta inflacion, el canon podria crecer por encima del mercado</li>
+                  <li><strong style={{ color: C.yellow }}>Plazo largo:</strong> 5 anos sin clausula de revision de condiciones de mercado</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Classification tags */}
+            <div style={{
+              marginTop: 16, padding: "14px 20px", background: C.dark3, borderRadius: 10,
+              display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
+            }}>
+              <span style={{ fontSize: ".72rem", color: C.t3, fontWeight: 600, marginRight: 8 }}>Clasificacion:</span>
+              {[
+                { label: "Contrato de arrendamiento", color: C.azure },
+                { label: "Comercial", color: C.purple },
+                { label: "Vigente", color: C.green },
+                { label: "Riesgo: Medio", color: C.orange },
+                { label: "5 anos", color: C.t2 },
+              ].map((tag, i) => (
+                <span key={i} style={{
+                  padding: "5px 12px", background: `${tag.color}15`, border: `1px solid ${tag.color}30`,
+                  borderRadius: 20, fontSize: ".7rem", fontWeight: 700, color: tag.color,
+                }}>{tag.label}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ───────── AUDIENCE POLL SIMULATOR ───────── */
+function AudiencePollSimulator() {
+  const [voted, setVoted] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [animatedPcts, setAnimatedPcts] = useState([0, 0, 0, 0, 0]);
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [showInsight, setShowInsight] = useState(false);
+
+  const options = [
+    { label: "0 - 10%", votes: 12, color: C.t3 },
+    { label: "10 - 25%", votes: 31, color: C.azure },
+    { label: "25 - 50%", votes: 68, color: C.green },
+    { label: "50 - 75%", votes: 42, color: C.purple },
+    { label: "75 - 100%", votes: 18, color: C.orange },
+  ];
+
+  const handleVote = useCallback((idx: number) => {
+    if (voted) return;
+    setSelectedOption(idx);
+    setVoted(true);
+
+    // Add user vote to the selected option
+    const updatedVotes = options.map((o, i) => o.votes + (i === idx ? 1 : 0));
+    const total = updatedVotes.reduce((a, b) => a + b, 0);
+
+    // Simulate votes arriving with a delay
+    setTimeout(() => {
+      setShowResults(true);
+      // Animate total votes counter
+      let count = 0;
+      const countInterval = setInterval(() => {
+        count += Math.ceil(total / 30);
+        if (count >= total) {
+          count = total;
+          clearInterval(countInterval);
+        }
+        setTotalVotes(count);
+      }, 50);
+
+      // Animate bars growing
+      const finalPcts = updatedVotes.map(v => Math.round((v / total) * 100));
+      let progress = 0;
+      const barInterval = setInterval(() => {
+        progress += 4;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(barInterval);
+          // Show insight after bars finish
+          setTimeout(() => setShowInsight(true), 600);
+        }
+        setAnimatedPcts(finalPcts.map(p => Math.round(p * (progress / 100))));
+      }, 40);
+    }, 800);
+  }, [voted, options]);
+
+  const reset = useCallback(() => {
+    setVoted(false);
+    setSelectedOption(null);
+    setShowResults(false);
+    setAnimatedPcts([0, 0, 0, 0, 0]);
+    setTotalVotes(0);
+    setShowInsight(false);
+  }, []);
+
+  return (
+    <div style={{
+      margin: "36px 0", background: C.dark2, border: `1px solid ${C.dark4}`, borderRadius: 16,
+      overflow: "hidden", position: "relative",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 3,
+        background: `linear-gradient(90deg,${C.azure},${C.purple},${C.green})`,
+      }} />
+
+      <div style={{ padding: 28 }}>
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20,
+        }}>
+          <div>
+            <div style={{
+              fontSize: ".65rem", fontWeight: 700, letterSpacing: 3, textTransform: "uppercase",
+              color: C.azure, marginBottom: 6, display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{ width: 8, height: 8, background: C.green, borderRadius: "50%", animation: "pl 2s infinite" }} />
+              Encuesta en vivo
+            </div>
+            <h3 style={{ marginBottom: 4, fontSize: "1.15rem" }}>
+              ¿Que porcentaje de su trabajo diario cree que podria optimizarse con IA?
+            </h3>
+            <p style={{ color: C.t3, fontSize: ".78rem" }}>
+              Seleccione una opcion para ver los resultados de la audiencia
+            </p>
+          </div>
+          {voted && (
+            <button onClick={reset} style={{
+              padding: "8px 16px", background: C.dark4, border: "none", borderRadius: 8,
+              color: C.t3, fontSize: ".72rem", fontWeight: 600, cursor: "pointer",
+              fontFamily: "'Inter',sans-serif",
+            }}>
+              Reiniciar
+            </button>
+          )}
+        </div>
+
+        {/* Options */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {options.map((opt, i) => (
+            <div
+              key={i}
+              onClick={() => handleVote(i)}
+              style={{
+                position: "relative", padding: "16px 20px", borderRadius: 12, cursor: voted ? "default" : "pointer",
+                border: `2px solid ${selectedOption === i ? opt.color : C.dark4}`,
+                background: showResults ? "transparent" : (selectedOption === i ? `${opt.color}10` : C.dark3),
+                transition: ".4s", overflow: "hidden",
+              }}
+            >
+              {/* Animated bar background */}
+              {showResults && (
+                <div style={{
+                  position: "absolute", top: 0, left: 0, bottom: 0,
+                  width: `${animatedPcts[i]}%`, background: `${opt.color}15`,
+                  transition: "width .6s cubic-bezier(.25,.46,.45,.94)",
+                  borderRadius: 10,
+                }} />
+              )}
+              <div style={{
+                position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 8,
+                    background: selectedOption === i ? opt.color : C.dark4,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: ".3s",
+                  }}>
+                    {selectedOption === i && (
+                      <span style={{ color: C.dark, fontWeight: 900, fontSize: ".72rem" }}>{"\u2713"}</span>
+                    )}
+                  </div>
+                  <span style={{
+                    fontSize: ".9rem", fontWeight: 700, color: selectedOption === i ? opt.color : C.t1,
+                  }}>
+                    {opt.label}
+                  </span>
+                </div>
+                {showResults && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{
+                      fontSize: "1rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                      color: opt.color,
+                    }}>
+                      {animatedPcts[i]}%
+                    </span>
+                    <span style={{
+                      fontSize: ".72rem", color: C.t3, fontFamily: "'JetBrains Mono',monospace",
+                    }}>
+                      ({options[i].votes + (i === selectedOption ? 1 : 0)} votos)
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Total votes counter */}
+        {showResults && (
+          <div style={{
+            marginTop: 16, textAlign: "center", fontSize: ".82rem", color: C.t3,
+          }}>
+            <span style={{
+              fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.azure,
+              fontSize: "1.1rem",
+            }}>
+              {totalVotes}
+            </span>{" "}
+            respuestas totales de la audiencia
+          </div>
+        )}
+
+        {/* Insight */}
+        {showInsight && (
+          <div style={{
+            marginTop: 20, padding: 20,
+            background: `linear-gradient(135deg,rgba(0,169,224,.06),rgba(52,211,153,.06))`,
+            border: `1px solid rgba(0,169,224,.2)`, borderRadius: 12,
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 10,
+                background: `linear-gradient(135deg,${C.azure}20,${C.green}20)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.2rem", flexShrink: 0,
+              }}>
+                {"💡"}
+              </div>
+              <div>
+                <div style={{ fontSize: ".72rem", fontWeight: 700, color: C.azure, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+                  Dato de la industria
+                </div>
+                <p style={{ fontSize: ".84rem", color: C.t2, lineHeight: 1.7 }}>
+                  El consenso global sugiere que entre <strong style={{ color: C.green }}>30-40% de tareas en real estate
+                  son automatizables</strong> con IA actual. Las areas con mayor potencial: analisis de contratos (60% de
+                  reduccion de tiempo), gestion energetica (10-40% ahorro) y due diligence (50% mas rapido).
+                </p>
+                <div style={{
+                  marginTop: 8, fontSize: ".68rem", color: C.t3, fontStyle: "italic",
+                }}>
+                  Fuente: McKinsey Global Institute, JLL Research 2025
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════ */
@@ -1056,6 +1835,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* ── CARRERA BEFORE vs AFTER ── */}
+        <BeforeVsAfterRace />
 
         <MythBuster />
 
@@ -1696,6 +2478,9 @@ export default function Home() {
             ),
           },
         ]} />
+
+        {/* ── DOCUMENT ANALYZER DEMO ── */}
+        <DocumentAnalyzerDemo />
       </Section>
 
       {/* ═══════ IA EN REAL ESTATE ═══════ */}
@@ -1979,6 +2764,9 @@ export default function Home() {
             </Card>
           ))}
         </div>
+
+        {/* ── AUDIENCE POLL SIMULATOR ── */}
+        <AudiencePollSimulator />
 
         <div style={{
           marginTop: 36, padding: 28, background: `linear-gradient(135deg,rgba(167,139,250,.04),rgba(0,169,224,.04))`,
