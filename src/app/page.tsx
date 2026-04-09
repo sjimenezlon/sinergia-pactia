@@ -1673,6 +1673,16 @@ export default function Home() {
         <style>{`@keyframes fp{0%{opacity:0;transform:translateY(100vh)}10%{opacity:.4}90%{opacity:.4}100%{opacity:0;transform:translateY(-20vh)}}@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}@keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}`}</style>
 
         <div style={{ position: "relative", zIndex: 2 }}>
+          {/* Logo NODO + Universidad EAFIT */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 28 }}>
+            <img src="/logo-nodo.svg" alt="NODO" style={{ height: 48, filter: "brightness(0) invert(1)" }} />
+            <div style={{ width: 1, height: 32, background: "rgba(255,255,255,.2)" }} />
+            <div>
+              <div style={{ fontSize: ".95rem", fontWeight: 800, color: C.t1, letterSpacing: 1 }}>Universidad EAFIT</div>
+              <div style={{ fontSize: ".65rem", color: C.t3, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase" }}>Escuela de Ciencias Aplicadas e Ingeniería</div>
+            </div>
+          </div>
+
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 18px",
             background: C.azureGlow, border: "1px solid rgba(0,169,224,.2)", borderRadius: 24,
