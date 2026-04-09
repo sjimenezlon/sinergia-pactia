@@ -919,18 +919,15 @@ export default function Home() {
 
           <TypingEffect />
 
-          <div style={{ display: "flex", gap: 44, marginTop: 44, flexWrap: "wrap" }}>
-            {[
-              { v: "36h", l: "Programa total" },
-              { v: "6", l: "Módulos" },
-              { v: "6", l: "Sesiones" },
-              { v: "3h", l: "Esta sesión" },
-            ].map((s, i) => (
-              <div key={i}>
-                <div style={{ fontSize: "2.2rem", fontWeight: 900, color: C.azure, fontFamily: "'JetBrains Mono',monospace" }}>{s.v}</div>
-                <div style={{ fontSize: ".72rem", color: C.t3, textTransform: "uppercase", letterSpacing: 1, marginTop: 3 }}>{s.l}</div>
-              </div>
-            ))}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 16, marginTop: 44, padding: "16px 24px",
+            background: "rgba(0,169,224,.06)", border: "1px solid rgba(0,169,224,.12)", borderRadius: 12,
+          }}>
+            <div style={{ width: 44, height: 44, borderRadius: "50%", background: `linear-gradient(135deg,${C.azure},${C.zafre})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", flexShrink: 0 }}>👨‍🏫</div>
+            <div>
+              <div style={{ fontSize: ".95rem", fontWeight: 700, color: C.t1 }}>Profesor Santiago Jiménez Londoño</div>
+              <div style={{ fontSize: ".75rem", color: C.azure, fontWeight: 600, letterSpacing: 1 }}>Área de Computación y Analítica</div>
+            </div>
           </div>
         </div>
       </Section>
