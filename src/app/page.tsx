@@ -41,6 +41,7 @@ function Nav() {
     { id: "real-estate", label: "Real Estate" },
     { id: "casos", label: "Casos" },
     { id: "oportunidades", label: "Oportunidades" },
+    { id: "ejercicios", label: "Ejercicios" },
     { id: "etica", label: "Ética" },
     { id: "estrategia", label: "Estrategia" },
     { id: "roadmap", label: "Roadmap" },
@@ -78,6 +79,148 @@ function Nav() {
         backgroundSize: "200% 100%", animation: "shimmer 3s linear infinite", transition: "width .15s",
       }} />
     </nav>
+  );
+}
+
+/* ───────── NEURAL NETWORK ANIMATED BACKGROUND ───────── */
+function NeuralNetworkBG() {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let raf = 0;
+    let w = 0, h = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    // 3 layers (input 5, hidden 7, hidden 7, output 4)
+    const layers = [5, 7, 7, 4];
+    type Node = { x: number; y: number; pulse: number };
+    type Pulse = { from: Node; to: Node; t: number; speed: number };
+    const nodes: Node[][] = [];
+    const pulses: Pulse[] = [];
+
+    const layout = () => {
+      const rect = canvas.getBoundingClientRect();
+      w = rect.width;
+      h = rect.height;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.scale(dpr, dpr);
+      nodes.length = 0;
+      const padX = w * 0.08;
+      const padY = h * 0.12;
+      const usableW = w - padX * 2;
+      const usableH = h - padY * 2;
+      layers.forEach((count, li) => {
+        const arr: Node[] = [];
+        const lx = padX + (usableW * li) / (layers.length - 1);
+        for (let i = 0; i < count; i++) {
+          const ly = padY + (usableH * (i + 0.5)) / count;
+          arr.push({ x: lx, y: ly, pulse: 0 });
+        }
+        nodes.push(arr);
+      });
+    };
+
+    layout();
+
+    const spawnPulse = () => {
+      const layerIdx = Math.floor(Math.random() * (nodes.length - 1));
+      const from = nodes[layerIdx][Math.floor(Math.random() * nodes[layerIdx].length)];
+      const to = nodes[layerIdx + 1][Math.floor(Math.random() * nodes[layerIdx + 1].length)];
+      pulses.push({ from, to, t: 0, speed: 0.005 + Math.random() * 0.01 });
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+
+      // Connections
+      ctx.lineWidth = 0.4;
+      ctx.strokeStyle = "rgba(0,169,224,0.08)";
+      for (let li = 0; li < nodes.length - 1; li++) {
+        for (const a of nodes[li]) {
+          for (const b of nodes[li + 1]) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Pulses
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i];
+        p.t += p.speed;
+        if (p.t >= 1) {
+          p.to.pulse = 1;
+          pulses.splice(i, 1);
+          continue;
+        }
+        const x = p.from.x + (p.to.x - p.from.x) * p.t;
+        const y = p.from.y + (p.to.y - p.from.y) * p.t;
+        // Trail line
+        const grad = ctx.createLinearGradient(p.from.x, p.from.y, x, y);
+        grad.addColorStop(0, "rgba(0,169,224,0)");
+        grad.addColorStop(1, "rgba(0,169,224,0.5)");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(p.from.x, p.from.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        // Head
+        ctx.fillStyle = "rgba(51,191,239,0.95)";
+        ctx.beginPath();
+        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Nodes
+      for (const layer of nodes) {
+        for (const n of layer) {
+          const r = 3 + n.pulse * 4;
+          const glow = 0.25 + n.pulse * 0.55;
+          ctx.fillStyle = `rgba(0,169,224,${glow})`;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = `rgba(240,242,255,${0.55 + n.pulse * 0.45})`;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 1.6, 0, Math.PI * 2);
+          ctx.fill();
+          n.pulse *= 0.94;
+        }
+      }
+
+      if (Math.random() < 0.12) spawnPulse();
+      raf = requestAnimationFrame(draw);
+    };
+
+    draw();
+    const onResize = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      layout();
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={ref}
+      style={{
+        position: "absolute", inset: 0, width: "100%", height: "100%",
+        opacity: 0.55, pointerEvents: "none", zIndex: 1,
+      }}
+    />
   );
 }
 
@@ -137,20 +280,71 @@ function Card({ children, style, accent }: { children: React.ReactNode; style?: 
   );
 }
 
-/* ───────── COUNTER BOX ───────── */
+/* ───────── COUNTER BOX (with count-up animation) ───────── */
 function Counter({ value, label, sub, color }: { value: string; label: string; sub?: string; color?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [vis, setVis] = useState(false);
+  const [hover, setHover] = useState(false);
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: 0.4 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!vis) return;
+    const match = value.match(/^([^\d.-]*)(-?[\d.,]+)(.*)$/);
+    if (!match) { setDisplay(value); return; }
+    const prefix = match[1] || "";
+    const numStr = match[2].replace(/,/g, "");
+    const target = parseFloat(numStr);
+    const suffix = match[3] || "";
+    if (isNaN(target)) { setDisplay(value); return; }
+    const decimals = (numStr.split(".")[1] || "").length;
+    const duration = 1200;
+    const start = performance.now();
+    let raf = 0;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = target * eased;
+      const formatted = decimals > 0 ? current.toFixed(decimals) : Math.round(current).toString();
+      setDisplay(`${prefix}${formatted}${suffix}`);
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [vis, value]);
+
+  const c = color || C.azure;
   return (
-    <div style={{
-      textAlign: "center", padding: "24px 16px", background: C.dark2,
-      border: `1px solid ${C.dark4}`, borderRadius: 14, transition: ".3s",
-    }}>
+    <div
+      ref={ref}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        textAlign: "center", padding: "24px 16px", background: C.dark2,
+        border: `1px solid ${hover ? `${c}60` : C.dark4}`, borderRadius: 14,
+        transition: ".3s", position: "relative", overflow: "hidden",
+        transform: hover ? "translateY(-2px)" : "translateY(0)",
+        boxShadow: hover ? `0 12px 32px ${c}20` : "none",
+      }}
+    >
       <div style={{
+        position: "absolute", inset: 0,
+        background: `radial-gradient(circle at 50% 0%,${c}12 0%,transparent 70%)`,
+        opacity: hover ? 1 : 0.45, transition: ".3s", pointerEvents: "none",
+      }} />
+      <div style={{
+        position: "relative",
         fontSize: "2.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono', monospace",
-        background: `linear-gradient(135deg,${color || C.azure},${C.azureLight})`,
+        background: `linear-gradient(135deg,${c},${C.azureLight})`,
         WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-      }}>{value}</div>
-      <div style={{ fontSize: ".72rem", color: C.t3, marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>{label}</div>
-      {sub && <div style={{ fontSize: ".68rem", color: C.green, marginTop: 3, fontWeight: 600 }}>{sub}</div>}
+      }}>{display}</div>
+      <div style={{ position: "relative", fontSize: ".72rem", color: C.t3, marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>{label}</div>
+      {sub && <div style={{ position: "relative", fontSize: ".68rem", color: C.green, marginTop: 3, fontWeight: 600 }}>{sub}</div>}
     </div>
   );
 }
@@ -167,13 +361,27 @@ function Bar({ label, pct, color, delay }: { label: string; pct: number; color: 
   return (
     <div ref={ref} style={{ display: "flex", alignItems: "center", margin: "10px 0", gap: 12 }}>
       <div style={{ width: 220, fontSize: ".78rem", fontWeight: 600, textAlign: "right", flexShrink: 0, color: C.t2 }}>{label}</div>
-      <div style={{ flex: 1, height: 28, background: C.dark3, borderRadius: 7, overflow: "hidden" }}>
+      <div style={{
+        flex: 1, height: 28, background: C.dark3, borderRadius: 7, overflow: "hidden",
+        position: "relative", border: `1px solid ${C.dark4}`,
+      }}>
         <div style={{
           height: "100%", borderRadius: 7, display: "flex", alignItems: "center", paddingLeft: 12,
           fontSize: ".72rem", fontWeight: 700, color: C.dark, width: `${w}%`,
-          transition: "width 1.5s cubic-bezier(.25,.46,.45,.94)", background: color,
-        }}>{pct}%</div>
+          transition: "width 1.5s cubic-bezier(.25,.46,.45,.94)",
+          background: `linear-gradient(90deg,${color}AA,${color})`,
+          boxShadow: `inset 0 0 16px ${color}30, 0 0 8px ${color}40`,
+          position: "relative", overflow: "hidden",
+        }}>
+          <span style={{ position: "relative", zIndex: 2 }}>{pct}%</span>
+          <span style={{
+            position: "absolute", top: 0, right: 0, bottom: 0, width: 40,
+            background: `linear-gradient(90deg,transparent,rgba(255,255,255,.25))`,
+            animation: "barShine 2.4s ease-in-out infinite",
+          }} />
+        </div>
       </div>
+      <style>{`@keyframes barShine{0%,100%{opacity:0}50%{opacity:1}}`}</style>
     </div>
   );
 }
@@ -1626,12 +1834,859 @@ function AudiencePollSimulator() {
                 <div style={{
                   marginTop: 8, fontSize: ".68rem", color: C.t3, fontStyle: "italic",
                 }}>
-                  Fuente: McKinsey Global Institute, JLL Research 2025
+                  Fuente: McKinsey Global Institute (Q1 2026), JLL Research 2026
                 </div>
               </div>
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ───────── LLM COST SIMULATOR (abril 2026) ───────── */
+function LLMCostSimulator() {
+  const [contratos, setContratos] = useState(50);
+  const [paginas, setPaginas] = useState(15);
+
+  // Precios públicos USD/1M tokens · abril 2026
+  const models = useMemo(() => [
+    { id: "opus", name: "Claude Opus 4.7", tier: "Frontier · 1M ctx", inp: 15.0, out: 75.0, color: C.azure, quality: 98, speed: 55, badge: "Máxima calidad" },
+    { id: "gpt5", name: "GPT-5", tier: "Frontier · 400K ctx", inp: 2.5, out: 10.0, color: C.green, quality: 96, speed: 70, badge: "Balance top" },
+    { id: "sonnet", name: "Claude Sonnet 4.6", tier: "Pro · 1M ctx", inp: 3.0, out: 15.0, color: C.azureLight, quality: 94, speed: 80, badge: "Recomendado" },
+    { id: "gemini", name: "Gemini 3 Pro", tier: "Frontier · 2M ctx", inp: 1.25, out: 5.0, color: C.yellow, quality: 93, speed: 72, badge: "Mejor ctx" },
+    { id: "haiku", name: "Claude Haiku 4.5", tier: "Fast · 500K ctx", inp: 1.0, out: 5.0, color: C.purple, quality: 86, speed: 96, badge: "Más rápido" },
+    { id: "gpt5mini", name: "GPT-5 mini", tier: "Fast · 400K ctx", inp: 0.4, out: 1.6, color: C.orange, quality: 84, speed: 98, badge: "Más barato" },
+  ], []);
+
+  // 1 página ≈ 500 tokens input (contrato) + 200 tokens output (análisis estructurado)
+  const tokensInput = contratos * paginas * 500;
+  const tokensOutput = contratos * paginas * 200;
+
+  const costs = useMemo(() => models.map(m => {
+    const costUSD = (tokensInput / 1_000_000) * m.inp + (tokensOutput / 1_000_000) * m.out;
+    return { ...m, cost: costUSD };
+  }), [models, tokensInput, tokensOutput]);
+
+  const maxCost = Math.max(...costs.map(c => c.cost));
+  const minCost = Math.min(...costs.map(c => c.cost));
+
+  // Manual: 8h × USD 50/h × contratos
+  const manualCost = contratos * 8 * 50;
+  const bestCost = minCost;
+  const savings = manualCost - bestCost;
+  const savingsPct = Math.round((savings / manualCost) * 100);
+
+  const fmt = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : n >= 1 ? `$${n.toFixed(2)}` : `$${n.toFixed(3)}`;
+
+  return (
+    <div style={{
+      margin: "36px 0", background: C.dark2, border: `1px solid ${C.dark4}`,
+      borderRadius: 16, padding: 32, overflow: "hidden", position: "relative",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 3,
+        background: `linear-gradient(90deg,${C.azure},${C.purple},${C.green},${C.yellow})`,
+      }} />
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, marginBottom: 8, flexWrap: "wrap" }}>
+        <div>
+          <h3 style={{ marginBottom: 4 }}>Simulador de costo LLM · abril 2026</h3>
+          <p style={{ color: C.t3, fontSize: ".82rem" }}>
+            Compara qué cuesta analizar un lote de contratos con los 6 modelos más usados en producción este mes. Precios públicos USD por millón de tokens.
+          </p>
+        </div>
+        <div style={{
+          padding: "6px 14px", background: C.azureGlow, border: `1px solid ${C.azure}30`,
+          borderRadius: 20, fontSize: ".7rem", color: C.azure, fontWeight: 700, letterSpacing: 1, whiteSpace: "nowrap",
+        }}>
+          LIVE · Q2 2026
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 22 }}>
+        {/* Sliders */}
+        <div style={{
+          padding: 18, background: C.dark3, borderRadius: 12, border: `1px solid ${C.dark4}`,
+        }}>
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <label style={{ fontSize: ".78rem", fontWeight: 600, color: C.t1 }}>Contratos a analizar</label>
+              <span style={{ fontSize: ".82rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: C.azure }}>{contratos}</span>
+            </div>
+            <input
+              type="range" min={1} max={500} value={contratos}
+              onChange={(e) => setContratos(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.azure, cursor: "pointer" }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".62rem", color: C.t3 }}>
+              <span>1</span><span>500</span>
+            </div>
+          </div>
+          <div style={{ marginBottom: 4 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <label style={{ fontSize: ".78rem", fontWeight: 600, color: C.t1 }}>Páginas por contrato (promedio)</label>
+              <span style={{ fontSize: ".82rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: C.green }}>{paginas} pp</span>
+            </div>
+            <input
+              type="range" min={3} max={80} value={paginas}
+              onChange={(e) => setPaginas(Number(e.target.value))}
+              style={{ width: "100%", accentColor: C.green, cursor: "pointer" }}
+            />
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".62rem", color: C.t3 }}>
+              <span>3</span><span>80</span>
+            </div>
+          </div>
+
+          <div style={{
+            marginTop: 16, padding: "10px 14px", background: C.dark2, borderRadius: 10,
+            border: `1px solid ${C.dark4}`, fontSize: ".72rem", color: C.t3,
+            fontFamily: "'JetBrains Mono',monospace", display: "flex", justifyContent: "space-between",
+          }}>
+            <span>Input: <span style={{ color: C.azure }}>{(tokensInput / 1000).toFixed(0)}K tok</span></span>
+            <span>Output: <span style={{ color: C.green }}>{(tokensOutput / 1000).toFixed(0)}K tok</span></span>
+          </div>
+        </div>
+
+        {/* Manual vs best AI */}
+        <div style={{
+          padding: 18, background: `linear-gradient(135deg,rgba(0,169,224,.06),rgba(52,211,153,.06))`,
+          border: `1px solid ${C.azure}30`, borderRadius: 12,
+          display: "flex", flexDirection: "column", justifyContent: "space-between",
+        }}>
+          <div>
+            <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: C.azure, marginBottom: 8 }}>
+              Impacto del lote
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+              <div>
+                <div style={{ fontSize: ".62rem", color: C.red, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Manual (8h/contrato)</div>
+                <div style={{ fontSize: "1.3rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.red, marginTop: 2 }}>
+                  {fmt(manualCost)}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: ".62rem", color: C.green, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Mejor modelo IA</div>
+                <div style={{ fontSize: "1.3rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace", color: C.green, marginTop: 2 }}>
+                  {fmt(bestCost)}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style={{
+            padding: "10px 12px", background: C.dark2, borderRadius: 10, textAlign: "center",
+            border: `1px solid ${C.green}30`,
+          }}>
+            <div style={{ fontSize: ".65rem", fontWeight: 700, color: C.yellow, textTransform: "uppercase", letterSpacing: 1 }}>Ahorro potencial</div>
+            <div style={{
+              fontSize: "1.4rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+              background: `linear-gradient(135deg,${C.green},${C.azureLight})`,
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>
+              {fmt(savings)} <span style={{ fontSize: ".82rem" }}>({savingsPct}% menos)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bar comparison */}
+      <div style={{ marginTop: 24 }}>
+        <div style={{
+          fontSize: ".7rem", fontWeight: 700, color: C.t3, textTransform: "uppercase",
+          letterSpacing: 2, marginBottom: 12,
+        }}>
+          Costo por lote · orden del más barato al más premium
+        </div>
+        {[...costs].sort((a, b) => a.cost - b.cost).map((m) => {
+          const pct = maxCost === 0 ? 0 : (m.cost / maxCost) * 100;
+          const isBest = m.cost === bestCost;
+          return (
+            <div key={m.id} style={{
+              display: "grid", gridTemplateColumns: "190px 1fr 100px", alignItems: "center",
+              gap: 12, padding: "8px 0", borderBottom: `1px solid ${C.dark4}`,
+            }}>
+              <div>
+                <div style={{
+                  fontSize: ".78rem", fontWeight: 700, color: isBest ? C.green : C.t1,
+                  fontFamily: "'JetBrains Mono',monospace", display: "flex", alignItems: "center", gap: 6,
+                }}>
+                  {isBest && <span style={{ color: C.green }}>●</span>}
+                  {m.name}
+                </div>
+                <div style={{ fontSize: ".62rem", color: C.t3, marginTop: 2 }}>{m.tier} · {m.badge}</div>
+              </div>
+              <div style={{ height: 22, background: C.dark3, borderRadius: 6, overflow: "hidden", position: "relative" }}>
+                <div style={{
+                  height: "100%", width: `${pct}%`,
+                  background: `linear-gradient(90deg,${m.color}50,${m.color})`,
+                  borderRadius: 6, transition: "width .6s cubic-bezier(.25,.46,.45,.94)",
+                  boxShadow: isBest ? `0 0 12px ${m.color}80` : "none",
+                }} />
+                <div style={{
+                  position: "absolute", left: 10, top: 0, bottom: 0, display: "flex", alignItems: "center",
+                  fontSize: ".65rem", color: C.t3, fontFamily: "'JetBrains Mono',monospace",
+                }}>
+                  ${m.inp.toFixed(2)} in · ${m.out.toFixed(2)} out /1M
+                </div>
+              </div>
+              <div style={{
+                fontSize: ".95rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
+                color: m.color, textAlign: "right",
+              }}>
+                {fmt(m.cost)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{
+        marginTop: 18, padding: 14, background: "rgba(167,139,250,.04)", borderRadius: 10,
+        borderLeft: `3px solid ${C.purple}`, fontSize: ".78rem", color: C.t2, lineHeight: 1.6,
+      }}>
+        <strong style={{ color: C.t1 }}>Tips abril 2026:</strong> con <strong style={{ color: C.purple }}>prompt caching</strong> (Anthropic / OpenAI)
+        los contratos repetidos bajan 90% el costo de input. Con <strong style={{ color: C.purple }}>batch API</strong> el output cuesta 50% menos
+        para análisis no urgentes. Combinando ambos, un lote mensual de 200 contratos puede costar <strong style={{ color: C.green }}>menos de USD $20</strong>.
+      </div>
+    </div>
+  );
+}
+
+/* ───────── EJERCICIOS LAB · 7 ejercicios interactivos (abril 2026) ───────── */
+
+function CopyablePrompt({ prompt, color }: { prompt: string; color: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div style={{
+      background: C.dark3, border: `1px solid ${C.dark4}`, borderRadius: 12,
+      padding: "16px 18px 18px", position: "relative",
+    }}>
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10,
+      }}>
+        <div style={{
+          fontSize: ".62rem", fontWeight: 700, letterSpacing: 2, color, textTransform: "uppercase",
+        }}>
+          Prompt listo para pegar
+        </div>
+        <button
+          onClick={() => { navigator.clipboard?.writeText(prompt); setCopied(true); setTimeout(() => setCopied(false), 1800); }}
+          style={{
+            padding: "6px 14px", borderRadius: 8, border: "none", cursor: "pointer",
+            background: copied ? C.green : `linear-gradient(135deg,${color},${C.purple})`,
+            color: "#fff", fontWeight: 700, fontSize: ".68rem", letterSpacing: 1,
+            fontFamily: "'Inter',sans-serif", transition: ".25s",
+          }}
+        >
+          {copied ? "✓ COPIADO" : "COPIAR"}
+        </button>
+      </div>
+      <pre style={{
+        whiteSpace: "pre-wrap", margin: 0, fontFamily: "'JetBrains Mono',monospace",
+        fontSize: ".76rem", color: C.t1, lineHeight: 1.65, maxHeight: 360, overflow: "auto",
+      }}>{prompt}</pre>
+    </div>
+  );
+}
+
+type Chips = { label: string; value: string[]; options: string[]; onChange: (v: string[]) => void; color: string };
+function ChipsPicker({ label, value, options, onChange, color }: Chips) {
+  return (
+    <div>
+      <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.t3, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>{label}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {options.map(o => {
+          const on = value.includes(o);
+          return (
+            <button key={o} onClick={() => onChange(on ? value.filter(x => x !== o) : [...value, o])} style={{
+              padding: "7px 13px", borderRadius: 20, fontSize: ".74rem", fontWeight: 600,
+              border: `1px solid ${on ? color : C.dark4}`,
+              background: on ? `${color}18` : C.dark3, color: on ? color : C.t2,
+              cursor: "pointer", transition: ".2s", fontFamily: "'Inter',sans-serif",
+            }}>{on ? "✓ " : ""}{o}</button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SelectField({ label, value, options, onChange, color }: {
+  label: string; value: string; options: string[]; onChange: (v: string) => void; color: string;
+}) {
+  return (
+    <label style={{ display: "block" }}>
+      <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.t3, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
+      <select value={value} onChange={e => onChange(e.target.value)} style={{
+        width: "100%", padding: "10px 14px", background: C.dark3,
+        border: `1px solid ${C.dark4}`, borderRadius: 10, color: C.t1,
+        fontFamily: "'Inter',sans-serif", fontSize: ".85rem", outline: "none", cursor: "pointer",
+        borderLeft: `3px solid ${color}`,
+      }}>
+        {options.map(o => <option key={o} value={o} style={{ background: C.dark3 }}>{o}</option>)}
+      </select>
+    </label>
+  );
+}
+
+function TextField({ label, value, onChange, placeholder, color }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder: string; color: string;
+}) {
+  return (
+    <label style={{ display: "block" }}>
+      <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.t3, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>{label}</div>
+      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{
+        width: "100%", padding: "10px 14px", background: C.dark3,
+        border: `1px solid ${C.dark4}`, borderRadius: 10, color: C.t1,
+        fontFamily: "'Inter',sans-serif", fontSize: ".85rem", outline: "none",
+        borderLeft: `3px solid ${color}`,
+      }} />
+    </label>
+  );
+}
+
+function SliderField({ label, value, min, max, step, suffix, onChange, color }: {
+  label: string; value: number; min: number; max: number; step: number; suffix: string;
+  onChange: (v: number) => void; color: string;
+}) {
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+        <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.t3, letterSpacing: 1, textTransform: "uppercase" }}>{label}</div>
+        <div style={{ fontSize: ".85rem", fontWeight: 800, color, fontFamily: "'JetBrains Mono',monospace" }}>{value}{suffix}</div>
+      </div>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} style={{
+        width: "100%", accentColor: color,
+      }} />
+    </div>
+  );
+}
+
+function ExerciseLab() {
+  const [active, setActive] = useState(0);
+
+  /* ── Estado por ejercicio ── */
+  // E1: Claude - Contrato
+  const [e1tipo, setE1tipo] = useState("Retail");
+  const [e1plazo, setE1plazo] = useState("3-5 años");
+  const [e1foco, setE1foco] = useState<string[]>(["Riesgos ocultos", "Fechas clave", "Cifras y canon"]);
+
+  // E2: ChatGPT - Brief junta
+  const [e2activo, setE2activo] = useState("Centro Comercial Viva");
+  const [e2periodo, setE2periodo] = useState("Q1 2026");
+  const [e2formato, setE2formato] = useState("Bullets + tabla");
+  const [e2audiencia, setE2audiencia] = useState("Comité de Inversión");
+
+  // E3: Perplexity - Research
+  const [e3ciudad, setE3ciudad] = useState("Medellín");
+  const [e3segmento, setE3segmento] = useState("Oficinas AAA");
+  const [e3objetivo, setE3objetivo] = useState("Benchmark cap rate");
+
+  // E4: Gemini / Midjourney - Imagen
+  const [e4tipo, setE4tipo] = useState("Bodega logística");
+  const [e4ambiente, setE4ambiente] = useState("Atardecer dorado");
+  const [e4estilo, setE4estilo] = useState<string[]>(["Fotorealista", "Lente gran angular"]);
+  const [e4uso, setE4uso] = useState("Brochure comercial");
+
+  // E5: Lovable - Mini app
+  const [e5app, setE5app] = useState("Dashboard de ocupación por activo");
+  const [e5rol, setE5rol] = useState("Analista de portafolio");
+  const [e5features, setE5features] = useState<string[]>(["Filtros por ciudad", "Gráfico de tendencia", "Export a Excel"]);
+
+  // E6: Fathom + Claude - Reunión
+  const [e6tipo, setE6tipo] = useState("Comité de Activos");
+  const [e6duracion, setE6duracion] = useState(60);
+  const [e6foco, setE6foco] = useState<string[]>(["Decisiones tomadas", "Compromisos con responsable", "Riesgos señalados"]);
+
+  // E7: Zapier + Claude API - Automatización
+  const [e7trigger, setE7trigger] = useState("Nuevo contrato firmado en DocuSign");
+  const [e7accion, setE7accion] = useState("Resumen ejecutivo + extracción de datos clave");
+  const [e7destino, setE7destino] = useState("Slack #contratos-pactia");
+
+  /* ── Prompts dinámicos ── */
+  const p1 = `Eres un analista senior de real estate en Pactia. Voy a compartirte un contrato de arrendamiento de un activo de ${e1tipo} con plazo ${e1plazo}.
+
+PRIORIZA en tu análisis:
+${e1foco.map(f => `- ${f}`).join("\n")}
+
+Entregable (mantén estos encabezados exactos):
+
+1. RESUMEN EJECUTIVO — 3 bullets en lenguaje de comité
+2. TABLA DE DATOS CLAVE — partes, NIT, canon, incrementos, fechas, garantías
+3. RIESGOS (ordenados severidad alta → baja, con cita textual del contrato)
+4. CLÁUSULAS DE SALIDA / PENALIDADES — condiciones exactas
+5. 3-5 RECOMENDACIONES DE NEGOCIACIÓN accionables para llevar al comité
+
+Reglas: sé preciso con cifras, no inventes datos. Si hay ambigüedad márcala con "⚠ revisar".`;
+
+  const p2 = `Eres el jefe de análisis de Pactia preparando el brief de ${e2activo} para el ${e2audiencia} con corte ${e2periodo}.
+
+Estructura el output en formato: ${e2formato}
+
+Contenido obligatorio:
+- 1 titular en 1 frase (headline para abrir la sesión)
+- KPIs clave: ocupación, canon promedio m², WAULT, rotación, NOI vs presupuesto
+- 3 hallazgos (uno positivo, uno a vigilar, uno de oportunidad)
+- Tabla de variaciones vs periodo anterior y vs presupuesto
+- Recomendación con horizonte 90 días
+
+Tono: ejecutivo, sin tecnicismos, cifras con variación porcentual. Máximo 1 página equivalente.`;
+
+  const p3 = `Investiga para Pactia, fondo inmobiliario colombiano, lo siguiente:
+
+OBJETIVO: ${e3objetivo}
+CIUDAD: ${e3ciudad}
+SEGMENTO: ${e3segmento}
+VENTANA: últimos 12 meses, con corte abril 2026
+
+Entrégame:
+1. Estado del mercado (oferta, vacancy, canon m², cap rate si aplica) con fuente y fecha por cada dato
+2. Top 5 jugadores / activos comparables con ticket y estrategia
+3. 3 tendencias con evidencia de 2025-2026 (incluye fuentes en español cuando existan: DANE, Fitch Ratings, Colliers, CBRE, JLL, Galería Inmobiliaria)
+4. 2 riesgos macro específicos a Colombia (tasas, FX, regulación)
+
+Formato: bullets breves + tabla comparativa. Cita cada dato con URL. Si no hay evidencia sólida, dilo explícitamente.`;
+
+  const p4 = `Genera una imagen profesional para ${e4uso} de Pactia.
+
+SUJETO: ${e4tipo} perteneciente al portafolio Pactia en Colombia.
+AMBIENTE: ${e4ambiente}.
+ESTILO: ${e4estilo.join(", ") || "fotografía profesional"}.
+COMPOSICIÓN: encuadre amplio que muestre escala del activo + contexto urbano/logístico colombiano.
+DETALLES: señalética corporativa sutil tipo logo blanco, vehículos modernos (camiones o autos según tipo), personas como escala (lejanas, no protagónicas).
+TEXTURAS: concreto pulido, metal, vidrio reflectivo.
+POST: HDR suave, sin saturación exagerada, listo para imprimir en brochure o mostrar en junta.
+
+Relación de aspecto: 16:9. Evita: texto legible, logos reales de terceros, personas reconocibles.`;
+
+  const p5 = `Construye una app web en Lovable para Pactia.
+
+APP: ${e5app}
+USUARIO OBJETIVO: ${e5rol}
+FEATURES OBLIGATORIAS:
+${e5features.map(f => `- ${f}`).join("\n")}
+
+Stack: Next.js + Tailwind + Supabase (usa plantilla auth + tabla "activos" con columnas id, ciudad, segmento, area_m2, canon_actual, ocupacion_pct, fecha_ultima_revision).
+
+Paleta: dark mode, acento azul Pactia (#00A9E0) y zafiro (#000066). Tipografía Inter. Sidebar con navegación y dashboard como home.
+
+Genera datos seed realistas (10 activos en Colombia: Medellín, Bogotá, Cali, Barranquilla). Incluye estados vacío y de carga. Prepara el deploy para Vercel desde el primer mensaje.`;
+
+  const p6 = `Te paso la transcripción del "${e6tipo}" de Pactia de ${e6duracion} minutos. Genera un acta ejecutiva con estas secciones EXACTAS:
+
+${e6foco.map((f, i) => `${i + 1}. ${f.toUpperCase()}`).join("\n")}
+${e6foco.length + 1}. PRÓXIMA REUNIÓN (fecha + agenda sugerida)
+
+Reglas:
+- Cada compromiso en formato [Responsable] — [Acción] — [Fecha]
+- Cifras y nombres de activos textuales, no parafraseo
+- Si alguien habló de un riesgo sin conclusión, marca "SIN CIERRE ⚠"
+- Tono neutro, sin editorializar
+
+Formato final: markdown, máximo 1 página. Al final incluye 3 emails cortos listos para enviar a los responsables con su compromiso específico.`;
+
+  const p7 = `Flujo a construir en Zapier (o Make / n8n):
+
+TRIGGER: ${e7trigger}
+PASO IA (Claude API, modelo claude-sonnet-4-6):
+  System prompt:
+    "Eres un analista de real estate en Pactia. Cuando recibas un contrato extrae JSON estricto con:
+    { arrendador, arrendatario, nit, activo, ciudad, area_m2, canon_mensual_cop,
+      incremento_anual, fecha_inicio, fecha_fin, garantia_cop, penalidad_salida,
+      riesgo_nivel: 'bajo'|'medio'|'alto', resumen_3_bullets: string[] }"
+  User: {{contenido_del_pdf}}
+  Max tokens: 1500. Habilita prompt caching sobre el system prompt.
+
+ACCIÓN: ${e7accion}
+DESTINO: ${e7destino}
+
+Mensaje final a enviar:
+🆕 *Nuevo contrato: {{activo}}* ({{ciudad}}) — {{area_m2}} m²
+Canon: ${'$'}{{canon_mensual_cop}} · Vence: {{fecha_fin}} · Riesgo: {{riesgo_nivel}}
+Resumen:
+• {{resumen_3_bullets[0]}}
+• {{resumen_3_bullets[1]}}
+• {{resumen_3_bullets[2]}}
+
+Incluye fallback: si Claude devuelve nivel "alto", duplica la notificación al canal de Comité de Riesgos.`;
+
+  /* ── Metadatos de cada ejercicio ── */
+  const tabs = [
+    {
+      num: "01", color: C.azure, tool: "Claude Opus 4.7",
+      toolSub: "Anthropic · 1M ctx",
+      category: "Análisis documental",
+      title: "Diseccionar un contrato de arrendamiento",
+      objective: "Extraer riesgos, fechas, cifras y cláusulas ocultas de un contrato en < 1 minuto.",
+      useCase: "Un analista tarda 2-3 horas leyendo un contrato. Claude con 1M de contexto lo procesa en segundos, cita textualmente y señala ambigüedades.",
+      difficulty: "Básico", time: "5 min",
+      prompt: p1,
+      expected: "Informe en 5 secciones (resumen, tabla de datos, riesgos con cita, cláusulas de salida, recomendaciones) listo para copiar al comité.",
+      tips: [
+        "Sube el PDF como attachment, no copies texto plano — Claude preserva estructura y tablas.",
+        "Con 1M de contexto puedes mandarle 5-10 contratos a la vez para comparar portafolio.",
+        "Activa Artifacts si quieres que genere una tabla Excel descargable.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="Tipo de activo" value={e1tipo} onChange={setE1tipo} color={C.azure}
+            options={["Retail", "Oficinas", "Logística / Bodega", "Uso Mixto", "Self-storage"]} />
+          <SelectField label="Plazo del contrato" value={e1plazo} onChange={setE1plazo} color={C.azure}
+            options={["1-3 años", "3-5 años", "5-10 años", "+10 años"]} />
+          <div style={{ gridColumn: "1 / -1" }}>
+            <ChipsPicker label="Qué debe priorizar Claude" value={e1foco} onChange={setE1foco} color={C.azure}
+              options={["Fechas clave", "Riesgos ocultos", "Cifras y canon", "Cláusulas de salida", "IPC e incrementos", "Obligaciones ESG"]} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      num: "02", color: C.green, tool: "ChatGPT · GPT-5",
+      toolSub: "OpenAI · 400K ctx",
+      category: "Síntesis ejecutiva",
+      title: "Brief de activo para el Comité",
+      objective: "Pasar de 30 páginas de data-room a un brief de 1 página en el formato del comité.",
+      useCase: "Todas las semanas hay comité. En lugar de que un analista arme el brief manualmente, GPT-5 con Custom GPT entrenado en la plantilla Pactia lo hace en 30 segundos.",
+      difficulty: "Básico", time: "6 min",
+      prompt: p2,
+      expected: "Brief de 1 página: headline, KPIs, 3 hallazgos, tabla de variaciones y recomendación a 90 días — en el tono y formato del comité.",
+      tips: [
+        "Crea un Custom GPT con la plantilla del comité cargada como knowledge. Una vez, se reutiliza siempre.",
+        "Adjunta PDFs del último board pack para que tome el tono. GPT-5 ajusta automáticamente.",
+        "Pídele al final 'regenera el headline en 3 variantes' y quédate con la mejor.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <TextField label="Activo o portafolio" value={e2activo} onChange={setE2activo} color={C.green}
+            placeholder="Ej. Centro Comercial Viva" />
+          <SelectField label="Periodo" value={e2periodo} onChange={setE2periodo} color={C.green}
+            options={["Q1 2026", "Q4 2025", "Último año", "YTD 2026", "Cierre 2025"]} />
+          <SelectField label="Formato de salida" value={e2formato} onChange={setE2formato} color={C.green}
+            options={["Bullets + tabla", "Párrafo narrativo", "Dashboard ejecutivo", "One-pager PDF-ready"]} />
+          <SelectField label="Audiencia" value={e2audiencia} onChange={setE2audiencia} color={C.green}
+            options={["Comité de Inversión", "Junta Directiva", "LPs / Inversionistas", "Equipo comercial"]} />
+        </div>
+      ),
+    },
+    {
+      num: "03", color: C.purple, tool: "Perplexity Pro",
+      toolSub: "Deep Research · abr 2026",
+      category: "Research de mercado",
+      title: "Investigar un segmento en 5 minutos",
+      objective: "Obtener estado de mercado, jugadores, tendencias y riesgos con fuentes citadas por cada dato.",
+      useCase: "Cuando llega un pitch de un activo en una ciudad donde Pactia no está, el research pasivo toma días. Perplexity con Deep Research lo sintetiza con citas.",
+      difficulty: "Básico", time: "5 min",
+      prompt: p3,
+      expected: "Reporte con 4 bloques (mercado, comparables, tendencias, riesgos), cada dato con URL y fecha de publicación.",
+      tips: [
+        "Activa modo 'Deep Research' — toma 2-3 minutos pero entrega 10x más profundidad que Pro.",
+        "Pide al final 'exporta a markdown' y lo pegas directo en Notion o Confluence.",
+        "Combínalo con NotebookLM cargando los PDFs que Perplexity encontró para profundizar.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="Ciudad" value={e3ciudad} onChange={setE3ciudad} color={C.purple}
+            options={["Medellín", "Bogotá", "Cali", "Barranquilla", "Cartagena", "Panamá"]} />
+          <SelectField label="Segmento" value={e3segmento} onChange={setE3segmento} color={C.purple}
+            options={["Oficinas AAA", "Oficinas A/B", "Retail centros comerciales", "Logística last-mile", "Bodegas industriales", "Self-storage", "Data centers"]} />
+          <div style={{ gridColumn: "1 / -1" }}>
+            <SelectField label="Objetivo del research" value={e3objetivo} onChange={setE3objetivo} color={C.purple}
+              options={["Benchmark cap rate", "Mapeo de competidores", "Due diligence de entrada", "Tendencias 12 meses", "Análisis de oferta nueva"]} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      num: "04", color: C.yellow, tool: "Gemini 3 Pro · Imagen",
+      toolSub: "o Midjourney v7 / DALL-E 4",
+      category: "Generación visual",
+      title: "Imágenes de marketing para activos",
+      objective: "Crear renders y fotografía comercial sin contratar productora ni renderista externo.",
+      useCase: "Cuando lanzas un activo al mercado o comercial necesita material para un pitch, en vez de esperar 2 semanas a la productora generas imágenes listas para brochure en 1 hora.",
+      difficulty: "Básico", time: "8 min",
+      prompt: p4,
+      expected: "4 variaciones en 16:9 listas para brochure / LinkedIn / pitch deck. Sin watermarks, licencia comercial.",
+      tips: [
+        "Gemini 3 Pro es el más rápido y barato. Midjourney v7 para calidad cinematográfica. DALL-E 4 para texto legible.",
+        "Empieza siempre con el tipo de activo + ubicación realista colombiana ('bodega en El Dorado, Bogotá').",
+        "Evita generar personas reconocibles o logos de terceros — pide 'diversos, anónimos, lejanos'.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="Tipo de activo" value={e4tipo} onChange={setE4tipo} color={C.yellow}
+            options={["Bodega logística", "Torre de oficinas AAA", "Centro comercial", "Local retail en esquina", "Edificio de uso mixto", "Self-storage urbano"]} />
+          <SelectField label="Ambiente" value={e4ambiente} onChange={setE4ambiente} color={C.yellow}
+            options={["Atardecer dorado", "Medio día soleado", "Noche iluminada", "Mañana lluviosa andina", "Cielo despejado tropical"]} />
+          <SelectField label="Uso final" value={e4uso} onChange={setE4uso} color={C.yellow}
+            options={["Brochure comercial", "Post LinkedIn", "Pitch deck inversionistas", "Render para junta", "Website Pactia"]} />
+          <div style={{ gridColumn: "1 / -1" }}>
+            <ChipsPicker label="Estilo visual" value={e4estilo} onChange={setE4estilo} color={C.yellow}
+              options={["Fotorealista", "Render arquitectónico", "Editorial de revista", "Lente gran angular", "Foto con dron", "Blanco y negro premium"]} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      num: "05", color: C.orange, tool: "Lovable",
+      toolSub: "App builder · v3 abr 2026",
+      category: "Construir una app",
+      title: "Mini-app funcional en 10 minutos",
+      objective: "Construir un dashboard o calculadora real (no mockup) con base de datos y deploy en un solo prompt.",
+      useCase: "Cuando necesitas una herramienta interna (calculadora IRR, CRM liviano, dashboard de ocupación) y esperar al equipo de TI toma meses, Lovable te entrega una app desplegada en Vercel.",
+      difficulty: "Básico", time: "12 min",
+      prompt: p5,
+      expected: "Repo funcionando + URL pública de Vercel + Supabase con datos seed. Editable con prompts incrementales.",
+      tips: [
+        "Primer prompt: pide TODO de una vez — mejor 1 prompt grande que 10 pequeños.",
+        "Después itera: 'ahora agrega autenticación', 'cambia la paleta', 'añade exportar a Excel'.",
+        "Cuando el prototipo funcione, conéctalo a GitHub y sigue en Cursor para features avanzadas.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="¿Qué construimos?" value={e5app} onChange={setE5app} color={C.orange}
+            options={["Dashboard de ocupación por activo", "Calculadora de IRR / cap rate", "CRM liviano de arrendatarios", "Mapa interactivo del portafolio", "Simulador de renovación de contratos", "Tracker de mantenimientos pendientes"]} />
+          <SelectField label="Usuario final" value={e5rol} onChange={setE5rol} color={C.orange}
+            options={["Analista de portafolio", "Comité de Inversión", "Gerente de activo", "Equipo comercial", "Dirección financiera"]} />
+          <div style={{ gridColumn: "1 / -1" }}>
+            <ChipsPicker label="Features must-have" value={e5features} onChange={setE5features} color={C.orange}
+              options={["Filtros por ciudad", "Gráfico de tendencia", "Export a Excel", "Modo oscuro", "Autenticación Google", "Alertas por email", "API pública", "Mobile-first"]} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      num: "06", color: C.azureLight, tool: "Fathom · Granola · Meet",
+      toolSub: "Copilots de reunión + Claude",
+      category: "Reuniones productivas",
+      title: "Convertir reuniones en accionables",
+      objective: "Transformar cada comité o tour comercial en un acta ejecutiva con compromisos asignados.",
+      useCase: "Hoy nadie toma acta del comité o del tour con arrendatario potencial. Con Fathom grabando + Claude procesando, tienes acta en markdown y 3 emails de seguimiento listos para enviar.",
+      difficulty: "Básico", time: "4 min",
+      prompt: p6,
+      expected: "Acta de 1 página con 4 secciones + 3 emails personalizados a responsables, cada uno con su compromiso específico.",
+      tips: [
+        "Fathom / Granola graban y transcriben solos. Solo tienes que activarlos antes de la reunión.",
+        "Gemini está integrado nativo en Meet y Google Workspace — si ya usas Google, actívalo.",
+        "Pasa la transcripción a Claude y usa este prompt como paso final. Tiempo total: 2 min.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="Tipo de reunión" value={e6tipo} onChange={setE6tipo} color={C.azureLight}
+            options={["Comité de Activos", "Comité de Inversión", "Junta Directiva", "Tour con arrendatario", "1:1 con gerente", "Kick-off con contratista", "Reunión con inversionista (LP)"]} />
+          <div>
+            <SliderField label="Duración (min)" value={e6duracion} min={15} max={180} step={5} suffix=" min"
+              onChange={setE6duracion} color={C.azureLight} />
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <ChipsPicker label="Qué debe extraer" value={e6foco} onChange={setE6foco} color={C.azureLight}
+              options={["Decisiones tomadas", "Compromisos con responsable", "Riesgos señalados", "Cifras y KPIs mencionados", "Activos del portafolio mencionados", "Próximos pasos"]} />
+          </div>
+        </div>
+      ),
+    },
+    {
+      num: "07", color: C.red, tool: "Zapier + Claude API",
+      toolSub: "o Make · n8n",
+      category: "Automatización end-to-end",
+      title: "Automatizar ciclo contrato → resumen → Slack",
+      objective: "Cada vez que se firma un contrato, que la IA lo resuma y notifique al equipo sin intervención humana.",
+      useCase: "Hoy un contrato firmado queda en DocuSign y nadie lo lee hasta que hay un problema. Con este flow el equipo recibe resumen + nivel de riesgo en 30 segundos de firmado.",
+      difficulty: "Básico+", time: "15 min",
+      prompt: p7,
+      expected: "Flow activo en Zapier corriendo 24/7. Cada contrato firmado dispara resumen estructurado, notificación a Slack y fallback a Comité de Riesgos si riesgo = alto.",
+      tips: [
+        "Activa prompt caching sobre el system prompt: pagarás 90% menos porque el prompt es el mismo en cada ejecución.",
+        "Empieza con Make o n8n si quieres visualizar el flow. Zapier es más rápido de armar pero menos flexible.",
+        "Agrega un paso de 'human-in-the-loop' en Slack: un botón '✅ confirmar' antes de que la IA actúe en casos de riesgo alto.",
+      ],
+      fields: (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <SelectField label="Trigger" value={e7trigger} onChange={setE7trigger} color={C.red}
+            options={["Nuevo contrato firmado en DocuSign", "Email nuevo en bandeja contratos@", "PDF subido a Google Drive", "Entrada nueva en formulario Pactia", "Contrato actualizado en SharePoint"]} />
+          <SelectField label="Qué hace la IA" value={e7accion} onChange={setE7accion} color={C.red}
+            options={["Resumen ejecutivo + extracción de datos clave", "Clasificar nivel de riesgo (bajo/medio/alto)", "Verificar vs política interna y señalar desviaciones", "Comparar con contrato anterior y listar cambios"]} />
+          <div style={{ gridColumn: "1 / -1" }}>
+            <SelectField label="Destino / siguiente paso" value={e7destino} onChange={setE7destino} color={C.red}
+              options={["Slack #contratos-pactia", "Email al Comité de Activos", "Nueva fila en Google Sheets", "Tarjeta en Trello / Asana", "Registro en Notion + Slack"]} />
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const a = tabs[active];
+
+  return (
+    <div style={{ margin: "36px 0 0" }}>
+      {/* Selector horizontal de ejercicios */}
+      <div style={{
+        display: "flex", gap: 10, overflowX: "auto", padding: "4px 2px 18px",
+        scrollbarWidth: "thin",
+      }}>
+        {tabs.map((t, i) => {
+          const on = i === active;
+          return (
+            <button key={i} onClick={() => setActive(i)} style={{
+              minWidth: 230, flex: "0 0 auto", textAlign: "left", cursor: "pointer",
+              padding: "14px 16px", borderRadius: 14, transition: ".25s",
+              background: on ? `linear-gradient(135deg,${t.color}15,${C.dark2})` : C.dark2,
+              border: `1px solid ${on ? t.color : C.dark4}`,
+              boxShadow: on ? `0 8px 32px ${t.color}25` : "none",
+              transform: on ? "translateY(-2px)" : "none",
+              fontFamily: "'Inter',sans-serif",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <div style={{
+                  fontFamily: "'JetBrains Mono',monospace", fontSize: ".85rem", fontWeight: 900, color: t.color,
+                }}>{t.num}</div>
+                <div style={{
+                  fontSize: ".58rem", fontWeight: 700, color: on ? t.color : C.t3, letterSpacing: 1,
+                  padding: "2px 8px", borderRadius: 10,
+                  background: on ? `${t.color}15` : C.dark3, textTransform: "uppercase",
+                }}>{t.difficulty}</div>
+              </div>
+              <div style={{ fontSize: ".82rem", fontWeight: 700, color: on ? C.t1 : C.t2, lineHeight: 1.35, marginBottom: 4 }}>
+                {t.title}
+              </div>
+              <div style={{ fontSize: ".66rem", color: C.t3, fontFamily: "'JetBrains Mono',monospace" }}>
+                {t.tool.toUpperCase()} · {t.time}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Panel del ejercicio activo */}
+      <div style={{
+        background: C.dark2, border: `1px solid ${a.color}30`,
+        borderRadius: 18, overflow: "hidden", position: "relative",
+      }}>
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 3,
+          background: `linear-gradient(90deg,${a.color},${C.purple},${a.color})`,
+          backgroundSize: "200% 100%", animation: "shimmer 3s linear infinite",
+        }} />
+
+        {/* Cabecera */}
+        <div style={{
+          padding: "26px 30px 22px", borderBottom: `1px solid ${C.dark4}`,
+          background: `radial-gradient(ellipse at top left,${a.color}08,transparent 70%)`,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 18 }}>
+            <div style={{ flex: 1, minWidth: 260 }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
+                <span style={{
+                  padding: "4px 12px", borderRadius: 10, background: a.color, color: C.dark,
+                  fontSize: ".64rem", fontWeight: 800, letterSpacing: 1,
+                }}>EJERCICIO {a.num}</span>
+                <span style={{
+                  padding: "4px 12px", borderRadius: 10, background: C.dark3, color: a.color,
+                  fontSize: ".64rem", fontWeight: 700, letterSpacing: 1, border: `1px solid ${a.color}40`,
+                }}>{a.category.toUpperCase()}</span>
+                <span style={{ fontSize: ".7rem", color: C.t3, fontFamily: "'JetBrains Mono',monospace" }}>
+                  ⏱ {a.time} · {a.difficulty}
+                </span>
+              </div>
+              <h3 style={{
+                fontSize: "1.5rem", fontWeight: 900, lineHeight: 1.2, marginBottom: 8,
+                background: `linear-gradient(135deg,#fff,${a.color})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>
+                {a.title}
+              </h3>
+              <p style={{ color: C.t2, fontSize: ".88rem", lineHeight: 1.6, marginBottom: 6 }}>
+                <strong style={{ color: C.t1 }}>Objetivo:</strong> {a.objective}
+              </p>
+              <p style={{ color: C.t3, fontSize: ".8rem", lineHeight: 1.6 }}>
+                <strong style={{ color: a.color }}>Por qué importa para Pactia:</strong> {a.useCase}
+              </p>
+            </div>
+            <div style={{
+              padding: "14px 18px", borderRadius: 12, minWidth: 200,
+              background: C.dark3, border: `1px solid ${a.color}30`,
+              display: "flex", flexDirection: "column", justifyContent: "center",
+            }}>
+              <div style={{ fontSize: ".6rem", color: C.t3, letterSpacing: 2, fontWeight: 700 }}>HERRAMIENTA</div>
+              <div style={{
+                fontSize: "1rem", fontWeight: 800, color: a.color, marginTop: 2,
+                fontFamily: "'JetBrains Mono',monospace",
+              }}>{a.tool}</div>
+              <div style={{ fontSize: ".68rem", color: C.t3, marginTop: 3 }}>{a.toolSub}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cuerpo: inputs + prompt */}
+        <div style={{
+          padding: 28, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24,
+        }}>
+          <div>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, color: a.color, letterSpacing: 2, marginBottom: 14, textTransform: "uppercase" }}>
+              ▸ Configura tu caso
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {a.fields}
+            </div>
+
+            <div style={{
+              marginTop: 22, padding: 16, borderRadius: 12,
+              background: `${a.color}08`, border: `1px solid ${a.color}25`,
+            }}>
+              <div style={{ fontSize: ".68rem", fontWeight: 700, color: a.color, letterSpacing: 2, marginBottom: 8, textTransform: "uppercase" }}>
+                Output esperado
+              </div>
+              <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>{a.expected}</p>
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: ".68rem", fontWeight: 700, color: a.color, letterSpacing: 2, marginBottom: 14, textTransform: "uppercase" }}>
+              ▸ Prompt generado en vivo
+            </div>
+            <CopyablePrompt prompt={a.prompt} color={a.color} />
+
+            <div style={{ marginTop: 20 }}>
+              <div style={{ fontSize: ".68rem", fontWeight: 700, color: C.t3, letterSpacing: 2, marginBottom: 10, textTransform: "uppercase" }}>
+                Tips de experto
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {a.tips.map((t, i) => (
+                  <div key={i} style={{
+                    display: "flex", gap: 10, padding: "10px 12px", borderRadius: 10,
+                    background: C.dark3, border: `1px solid ${C.dark4}`,
+                  }}>
+                    <span style={{ color: a.color, fontWeight: 900, flexShrink: 0 }}>◆</span>
+                    <span style={{ color: C.t2, fontSize: ".78rem", lineHeight: 1.55 }}>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer: acción */}
+        <div style={{
+          padding: "18px 30px", borderTop: `1px solid ${C.dark4}`,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          background: C.dark3, flexWrap: "wrap", gap: 12,
+        }}>
+          <div style={{ fontSize: ".78rem", color: C.t2, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ color: a.color, fontWeight: 800 }}>→</span>
+            Ajusta los campos y el prompt se reescribe solo. Cópialo y pégalo en {a.tool.split("·")[0].trim()}.
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setActive((active + 6) % 7)} style={{
+              padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.dark4}`,
+              background: C.dark2, color: C.t2, cursor: "pointer", fontSize: ".74rem", fontWeight: 700,
+            }}>← Anterior</button>
+            <button onClick={() => setActive((active + 1) % 7)} style={{
+              padding: "8px 16px", borderRadius: 9, border: "none",
+              background: `linear-gradient(135deg,${a.color},${C.purple})`, color: "#fff",
+              cursor: "pointer", fontSize: ".74rem", fontWeight: 800, letterSpacing: 1,
+            }}>Siguiente ejercicio →</button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1658,8 +2713,10 @@ export default function Home() {
       <Section id="hero" style={{ display: "flex", flexDirection: "column", justifyContent: "center", overflow: "hidden" }}>
         <div style={{
           position: "absolute", inset: 0,
-          background: "radial-gradient(ellipse at 70% 50%,rgba(0,169,224,.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(0,0,102,.08) 0%,transparent 50%)",
+          background: "radial-gradient(ellipse at 70% 50%,rgba(0,169,224,.08) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(0,0,102,.12) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(167,139,250,.05) 0%,transparent 60%)",
         }} />
+        {/* Neural network */}
+        <NeuralNetworkBG />
         {/* Particles */}
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
           {Array.from({ length: 20 }).map((_, i) => (
@@ -1689,7 +2746,7 @@ export default function Home() {
             fontSize: ".75rem", color: C.azure, fontWeight: 600, marginBottom: 28, letterSpacing: 1,
           }}>
             <span style={{ width: 6, height: 6, background: C.green, borderRadius: "50%", animation: "pl 2s infinite" }} />
-            PACTIA x NODO EAFIT &mdash; Programa SinergIA 2026
+            PACTIA x NODO EAFIT &mdash; Programa SinergIA · Abril 2026
           </div>
 
           <h1 style={{
@@ -2019,8 +3076,8 @@ export default function Home() {
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, margin: "20px 0" }}>
             {[
-              { t: "Define el costo", d: "Los LLMs cobran por token. Un contrato de 50 páginas puede costar centavos o dólares dependiendo del modelo.", icon: "💰", color: C.green },
-              { t: "Limita el contexto", d: "Cada modelo tiene un límite de tokens (ventana de contexto). GPT-4o: 128K tokens, Claude: 200K tokens. Más contexto = mejor comprensión.", icon: "📏", color: C.azure },
+              { t: "Define el costo", d: "Los LLMs cobran por token. Un contrato de 50 páginas puede costar centavos o dólares según el modelo y el tier (cache, batch, thinking).", icon: "💰", color: C.green },
+              { t: "Limita el contexto", d: "Cada modelo tiene una ventana de contexto distinta. Abril 2026: GPT-5 400K, Claude Opus 4.7 1M, Gemini 3 Pro 2M. Más contexto = más comprensión.", icon: "📏", color: C.azure },
               { t: "Afecta la calidad", d: "Cómo tokenizas la información que le das al modelo determina qué tan buena será su respuesta. Basura entra = basura sale.", icon: "🎯", color: C.orange },
             ].map((item, i) => (
               <Card key={i} accent={item.color} style={{ padding: 20 }}>
@@ -2064,9 +3121,9 @@ export default function Home() {
             }}>
               <p style={{ color: C.t2, fontSize: ".82rem", lineHeight: 1.6 }}>
                 <strong style={{ color: C.t1 }}>¿Por qué importa?</strong> Cuando le envías un contrato de arrendamiento a un LLM,
-                este lo divide en miles de tokens. Un contrato típico de Pactia (~10 páginas) puede generar entre
-                <strong style={{ color: C.azure }}> 3,000 y 5,000 tokens</strong>. Con Claude (200K tokens de contexto), podrías analizar
-                simultáneamente <strong style={{ color: C.azure }}>~40 contratos completos</strong> en una sola conversación.
+                este lo divide en miles de tokens. Un contrato típico de Pactia (~10 páginas) genera entre
+                <strong style={{ color: C.azure }}> 3,000 y 5,000 tokens</strong>. Con Claude Opus 4.7 (1M tokens de contexto, abril 2026),
+                podrías analizar simultáneamente <strong style={{ color: C.azure }}>~200 contratos completos</strong> en una sola conversación — 5× más que hace un año.
               </p>
             </div>
           </div>
@@ -2090,10 +3147,10 @@ export default function Home() {
               </thead>
               <tbody>
                 {[
-                  { model: "GPT-4o", tokens: "128K tokens", equiv: "~96,000 palabras / ~300 páginas", use: "Análisis de múltiples documentos", color: C.green },
-                  { model: "Claude Opus/Sonnet", tokens: "200K tokens", equiv: "~150,000 palabras / ~500 páginas", use: "Contratos extensos, códigos legales", color: C.azure },
-                  { model: "Gemini 2.5 Pro", tokens: "1M tokens", equiv: "~750,000 palabras / ~2,500 páginas", use: "Portafolios completos, due diligence", color: C.yellow },
-                  { model: "GPT-4o mini", tokens: "128K tokens", equiv: "~96,000 palabras / ~300 páginas", use: "Tareas rápidas, alto volumen, bajo costo", color: C.t3 },
+                  { model: "GPT-5", tokens: "400K tokens", equiv: "~300,000 palabras / ~1,000 páginas", use: "Razonamiento de frontera, análisis multi-documento", color: C.green },
+                  { model: "Claude Opus 4.7 (1M)", tokens: "1,000K tokens", equiv: "~750,000 palabras / ~2,500 páginas", use: "Portafolios completos, códigos legales, due diligence", color: C.azure },
+                  { model: "Gemini 3 Pro", tokens: "2,000K tokens", equiv: "~1.5M palabras / ~5,000 páginas", use: "Ingesta masiva de archivos y repos", color: C.yellow },
+                  { model: "Claude Haiku 4.5", tokens: "500K tokens", equiv: "~375,000 palabras / ~1,250 páginas", use: "Tareas rápidas, alto volumen, bajo costo", color: C.t3 },
                 ].map((row, i) => (
                   <tr key={i}>
                     <td style={{ padding: "10px 16px", fontSize: ".82rem", color: row.color, fontWeight: 700, borderBottom: `1px solid ${C.dark4}`, background: C.dark2, fontFamily: "'JetBrains Mono',monospace" }}>{row.model}</td>
@@ -2435,10 +3492,10 @@ export default function Home() {
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginTop: 28 }}>
                   {[
-                    { name: "GPT-4o", org: "OpenAI", color: C.green },
-                    { name: "Claude 4", org: "Anthropic", color: C.azure },
-                    { name: "Gemini 2.5", org: "Google", color: C.yellow },
-                    { name: "Llama 4", org: "Meta (Open Source)", color: C.purple },
+                    { name: "GPT-5", org: "OpenAI · 2025", color: C.green },
+                    { name: "Claude Opus 4.7", org: "Anthropic · 2026", color: C.azure },
+                    { name: "Gemini 3 Pro", org: "Google DeepMind · 2026", color: C.yellow },
+                    { name: "Llama 4", org: "Meta · Open Source", color: C.purple },
                   ].map((m, i) => (
                     <Card key={i} accent={m.color}>
                       <div style={{ fontSize: "1.2rem", fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", color: m.color }}>{m.name}</div>
@@ -2491,6 +3548,9 @@ export default function Home() {
 
         {/* ── DOCUMENT ANALYZER DEMO ── */}
         <DocumentAnalyzerDemo />
+
+        {/* ── LLM COST SIMULATOR (abril 2026) ── */}
+        <LLMCostSimulator />
       </Section>
 
       {/* ═══════ IA EN REAL ESTATE ═══════ */}
@@ -2506,10 +3566,10 @@ export default function Home() {
 
         {/* Market stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, margin: "36px 0" }}>
-          <Counter value="$303B" label="Mercado IA en Real Estate 2025" sub="Business Research Co." />
-          <Counter value="$989B" label="Proyección 2029" sub="CAGR 34.4%" color={C.green} />
-          <Counter value="90%+" label="Firmas líder con IA como prioridad" color={C.purple} />
-          <Counter value="72%" label="Propietarios planean invertir en IA" color={C.orange} />
+          <Counter value="$408B" label="Mercado IA en Real Estate 2026" sub="Business Research Co. · Abr 2026" />
+          <Counter value="$1.3T" label="Proyección 2030" sub="CAGR 34% 2026–2030" color={C.green} />
+          <Counter value="94%" label="Firmas líder con IA como prioridad" sub="Deloitte Real Estate Outlook 2026" color={C.purple} />
+          <Counter value="81%" label="Propietarios invierten en IA en 2026" sub="JLL Technology Survey Q1 2026" color={C.orange} />
         </div>
 
         <h3 style={{ marginTop: 36, marginBottom: 16 }}>Adopción de IA por área de aplicación</h3>
@@ -2554,7 +3614,7 @@ export default function Home() {
               { value: "25T+", label: "Puntos de datos", color: C.azure },
               { value: "708%", label: "ROI (caso Hank)", color: C.orange },
             ]}
-            source="Fuente: JLL Research 2025"
+            source="Fuente: JLL Research 2026"
           />
           <CaseCard
             company="Prologis"
@@ -2576,7 +3636,7 @@ export default function Home() {
               { value: "1B+", label: "ft2 con IA", color: C.green },
               { value: "~20%", label: "Reducción costos mant.", color: C.orange },
             ]}
-            source="Fuente: CBRE / Facilities Dive 2025"
+            source="Fuente: CBRE / Facilities Dive 2026"
           />
         </div>
 
@@ -2601,7 +3661,7 @@ export default function Home() {
               { value: "80%+", label: "Planean más IA", color: C.purple },
               { value: "14%", label: "Ahorro promedio smart building", color: C.azure },
             ]}
-            source="Fuente: Honeywell / Panorad AI 2025"
+            source="Fuente: Honeywell / Panorad AI 2026"
           />
           <CaseCard
             company="McKinsey & Harvard"
@@ -2745,6 +3805,45 @@ export default function Home() {
           correct={1}
           feedback="Exacto. Los quick wins de IA para Pactia están en: 1) Análisis de contratos (60% más rápido, detectar cláusulas perdidas), 2) Mantenimiento predictivo (40% menos costos), y 3) Optimización energética (10-20% ahorro en HVAC). Estos tres generan ROI medible en 6-12 meses."
         />
+      </Section>
+
+      {/* ═══════ EJERCICIOS INTERACTIVOS ═══════ */}
+      <Section id="ejercicios">
+        <SN>Manos a la obra · abril 2026</SN>
+        <h2 style={{ background: `linear-gradient(135deg,#fff,${C.azureLight})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          7 ejercicios iniciales con IA
+        </h2>
+        <p style={{ fontSize: "1.05rem", color: C.t2, lineHeight: 1.7, maxWidth: 780 }}>
+          Ejercicios cortos y reales, pensados para el día a día de Pactia. Cada uno usa una herramienta distinta
+          (Claude, ChatGPT, Perplexity, Gemini, Lovable, Fathom, Zapier) y genera en vivo el prompt o flujo listo
+          para copiar. <strong style={{ color: C.t1 }}>No necesitas saber programar.</strong>
+        </p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginTop: 28 }}>
+          <Counter value="7" label="Ejercicios iniciales" sub="Básicos · < 15 min c/u" />
+          <Counter value="7" label="Herramientas distintas" sub="Ecosistema IA abril 2026" color={C.green} />
+          <Counter value="100%" label="Contexto Pactia" sub="Prompts con casos reales" color={C.purple} />
+          <Counter value="0" label="Requisitos de código" sub="Solo navegador y cuenta gratis" color={C.orange} />
+        </div>
+
+        <ExerciseLab />
+
+        <div style={{
+          marginTop: 32, padding: 20, borderRadius: 14,
+          background: `linear-gradient(135deg,${C.dark2},${C.dark3})`,
+          border: `1px solid ${C.azure}30`,
+          display: "grid", gridTemplateColumns: "auto 1fr", gap: 18, alignItems: "center",
+        }}>
+          <div style={{ fontSize: "2rem" }}>🎯</div>
+          <div>
+            <h3 style={{ marginBottom: 4 }}>Retoma estos ejercicios en el módulo 3 · Hacer (6h)</h3>
+            <p style={{ color: C.t2, fontSize: ".85rem", lineHeight: 1.6 }}>
+              Hoy armas los prompts; en el <strong style={{ color: C.azure }}>módulo 3</strong> los
+              ejecutas con datos reales de tu rol en Pactia y salimos con 1 automatización funcionando por participante.
+              En el <strong style={{ color: C.purple }}>módulo 5 · Construir</strong> los integramos en un proyecto de equipo.
+            </p>
+          </div>
+        </div>
       </Section>
 
       {/* ═══════ ETICA Y GOBERNANZA ═══════ */}
@@ -3216,13 +4315,16 @@ export default function Home() {
         </div>
 
         <div style={{
-          marginTop: 36, padding: 28, background: `linear-gradient(135deg,${C.dark2},${C.dark3})`,
-          border: `2px solid transparent`,
-          backgroundClip: "padding-box",
-          borderImage: `linear-gradient(135deg,${C.azure},${C.zafre}) 1`,
-          borderRadius: 0, // border-image doesn't work with border-radius
+          marginTop: 36, padding: 3, borderRadius: 18,
+          background: `linear-gradient(135deg,${C.azure},${C.purple},${C.zafre})`,
+          backgroundSize: "200% 200%",
+          animation: "gradientShift 8s ease infinite",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{
+            padding: 28, borderRadius: 15,
+            background: `linear-gradient(135deg,${C.dark2},${C.dark3})`,
+            display: "flex", alignItems: "center", gap: 20,
+          }}>
             <div style={{
               fontSize: "2.5rem", fontWeight: 900, fontFamily: "'JetBrains Mono',monospace",
               background: `linear-gradient(135deg,${C.azure},${C.purple})`,
@@ -3348,8 +4450,9 @@ export default function Home() {
           <div style={{ fontWeight: 900, fontSize: ".85rem", color: C.azure, letterSpacing: 2, fontStyle: "italic" }}>SinergIA</div>
           <div style={{ fontSize: ".72rem", color: C.t3, marginTop: 4 }}>IA y Analítica &mdash; Pactia x NODO EAFIT</div>
         </div>
-        <div style={{ fontSize: ".7rem", color: C.t3 }}>
-          Sesión 1 de 6 &bull; Módulo: Entender &bull; 2026
+        <div style={{ fontSize: ".7rem", color: C.t3, textAlign: "right" }}>
+          Sesión 1 de 6 &bull; Módulo: Entender &bull; Abril 2026<br />
+          <span style={{ color: C.t3, opacity: 0.7 }}>v2 · Actualizado con modelos Claude Opus 4.7, GPT-5, Gemini 3</span>
         </div>
       </footer>
     </>
